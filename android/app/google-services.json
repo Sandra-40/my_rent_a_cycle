@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "539727816233",
+    "project_id": "rentacycle-app",
+    "storage_bucket": "rentacycle-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539727816233:android:11a52e869c6a539e345e38",
+        "android_client_info": {
+          "package_name": "com.example.rentacycle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKNYAFe6POTbm4wmyj81vTJwQYHc2dSaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
