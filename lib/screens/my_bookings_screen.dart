@@ -1,247 +1,188 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'qr_scanner_screen.dart';
+import 'ride_screen.dart';
 
-class BookingsScreen extends StatefulWidget {
-  const BookingsScreen({super.key});
+class MyBookingsScreen extends StatefulWidget {
+  const MyBookingsScreen({super.key});
 
   @override
-  State<BookingsScreen> createState() => _BookingsScreenState();
+  State<MyBookingsScreen> createState() => _MyBookingsScreenState();
 }
 
-class _BookingsScreenState extends State<BookingsScreen> {
-  static const Color primaryBlue = Color(0xFF2563EB);
-  static const Color darkBlue = Color(0xFF173B6C);
-  static const Color lightBlue = Color(0xFFEAF2FF);
-  static const Color textDark = Color(0xFF334155);
-  static const Color textGrey = Color(0xFF7A8794);
+class _MyBookingsScreenState extends State<MyBookingsScreen> {
+  final Color green = const Color(0xFF1B8A5A);
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String selectedTab = 'Upcoming';
+
+  final List<String> tabs = ['Active', 'Upcoming', 'Completed'];
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
-    if (user == null) {
-      return const Scaffold(body: Center(child: Text('Please log in again.')));
-    }
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-
+      backgroundColor: const Color(0xFFF6F8F6),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         title: const Text(
           'My Bookings',
-          style: TextStyle(color: darkBlue, fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
       ),
-
-      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: _firestore
-            .collection('bookings')
-            .where('userId', isEqualTo: user.uid)
-            .snapshots(),
-
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: primaryBlue),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return _messageCard(
-              Icons.error_outline_rounded,
-              'Unable to load bookings',
-              'Please check your Firebase connection.',
-            );
-          }
-
-          final docs = snapshot.data?.docs ?? [];
-
-          final now = DateTime.now();
-
-          final activeBookings =
-              <QueryDocumentSnapshot<Map<String, dynamic>>>[];
-
-          final upcomingBookings =
-              <QueryDocumentSnapshot<Map<String, dynamic>>>[];
-
-          for (final doc in docs) {
-            final data = doc.data();
-
-            String status = data['status']?.toString().toLowerCase() ?? '';
-
-            final start = _readDate(data['startDateTime']);
-            final end = _readDate(data['endDateTime']);
-
-            // Automatically determine expired rides.
-            if (end != null && !end.isAfter(now)) {
-              status = 'completed';
-            } else if (start != null && start.isAfter(now)) {
-              status = 'upcoming';
-            } else if (start != null && !start.isAfter(now)) {
-              status = 'active';
-            }
-
-            if (status == 'active') {
-              activeBookings.add(doc);
-            } else if (status == 'upcoming') {
-              upcomingBookings.add(doc);
-            }
-          }
-
-          activeBookings.sort(
-            (a, b) => _compareDates(
-              a.data()['startDateTime'],
-              b.data()['startDateTime'],
-            ),
-          );
-
-          upcomingBookings.sort(
-            (a, b) => _compareDates(
-              a.data()['startDateTime'],
-              b.data()['startDateTime'],
-            ),
-          );
-
-          if (activeBookings.isEmpty && upcomingBookings.isEmpty) {
-            return _emptyBookings();
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'My Bookings',
-                  style: TextStyle(
-                    color: darkBlue,
-                    fontSize: 27,
-                    fontWeight: FontWeight.bold,
+      body: user == null
+          ? const Center(child: Text('Please log in to view your bookings.'))
+          : SafeArea(
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(20, 22, 20, 16),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Your Rides',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 6),
+                  // Booking category tabs
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: tabs.map((tab) {
+                        final isSelected = selectedTab == tab;
 
-                const Text(
-                  'Your active and upcoming cycle rides.',
-                  style: TextStyle(color: textGrey, fontSize: 14),
-                ),
-
-                const SizedBox(height: 22),
-
-                if (activeBookings.isNotEmpty) ...[
-                  _sectionTitle(
-                    'Active Ride',
-                    Icons.pedal_bike_rounded,
-                    Colors.green,
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() => selectedTab = tab);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 7),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: isSelected ? green : Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? green
+                                      : const Color(0xFFE3EAE5),
+                                ),
+                              ),
+                              child: Text(
+                                tab,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.black87,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  ...activeBookings.map(
-                    (doc) => _bookingCard(doc.id, doc.data(), 'active'),
+
+                  const SizedBox(height: 18),
+
+                  Expanded(
+                    child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      stream: FirebaseFirestore.instance
+                          .collection('bookings')
+                          .where('userId', isEqualTo: user.uid)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return const Center(
+                            child: Text('Unable to load your bookings.'),
+                          );
+                        }
+
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        final bookings =
+                            snapshot.data?.docs.where((doc) {
+                              final status = (doc.data()['status'] ?? '')
+                                  .toString()
+                                  .toLowerCase();
+
+                              return status == selectedTab.toLowerCase();
+                            }).toList() ??
+                            [];
+
+                        bookings.sort((a, b) {
+                          final aTime = a.data()['startTime'];
+                          final bTime = b.data()['startTime'];
+
+                          final aDate = aTime is Timestamp
+                              ? aTime.toDate()
+                              : DateTime(2000);
+                          final bDate = bTime is Timestamp
+                              ? bTime.toDate()
+                              : DateTime(2000);
+
+                          return aDate.compareTo(bDate);
+                        });
+
+                        if (bookings.isEmpty) {
+                          return _emptyState();
+                        }
+
+                        return ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          itemCount: bookings.length,
+                          itemBuilder: (context, index) {
+                            final doc = bookings[index];
+                            return _bookingCard(doc.id, doc.data());
+                          },
+                        );
+                      },
+                    ),
                   ),
-                  const SizedBox(height: 20),
                 ],
-
-                if (upcomingBookings.isNotEmpty) ...[
-                  _sectionTitle(
-                    'Upcoming Rides',
-                    Icons.schedule_rounded,
-                    primaryBlue,
-                  ),
-                  const SizedBox(height: 10),
-                  ...upcomingBookings.map(
-                    (doc) => _bookingCard(doc.id, doc.data(), 'upcoming'),
-                  ),
-                ],
-              ],
+              ),
             ),
-          );
-        },
-      ),
     );
   }
 
-  int _compareDates(dynamic a, dynamic b) {
-    final dateA = _readDate(a);
-    final dateB = _readDate(b);
+  Widget _bookingCard(String bookingId, Map<String, dynamic> data) {
+    final cycleName = (data['cycleName'] ?? 'Campus Cycle').toString();
 
-    if (dateA == null && dateB == null) return 0;
-    if (dateA == null) return 1;
-    if (dateB == null) return -1;
+    final start = data['startTime'];
+    final end = data['returnTime'];
 
-    return dateA.compareTo(dateB);
-  }
+    final startDate = start is Timestamp ? start.toDate() : null;
+    final endDate = end is Timestamp ? end.toDate() : null;
 
-  DateTime? _readDate(dynamic value) {
-    if (value is Timestamp) {
-      return value.toDate();
-    }
+    final duration = (data['duration'] ?? '—').toString();
+    final status = (data['status'] ?? 'upcoming').toString();
 
-    if (value is DateTime) {
-      return value;
-    }
-
-    return null;
-  }
-
-  Widget _sectionTitle(String title, IconData icon, Color color) {
-    return Row(
-      children: [
-        Icon(icon, color: color, size: 22),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(
-            color: darkBlue,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _bookingCard(
-    String bookingId,
-    Map<String, dynamic> data,
-    String displayStatus,
-  ) {
-    final cycleName =
-        data['cycleName']?.toString() ?? data['cycle']?.toString() ?? 'Cycle';
-
-    final cycleType = data['cycleType']?.toString() ?? 'Standard';
-
-    final location = data['cycleLocation']?.toString() ?? 'Campus';
-
-    final start = _readDate(data['startDateTime']);
-
-    final end = _readDate(data['endDateTime']);
-
-    final startText = start != null
-        ? _formatDateTime(start)
-        : _oldTime(data['startTimeText'] ?? data['startTime']);
-
-    final endText = end != null
-        ? _formatDateTime(end)
-        : _oldTime(data['endTimeText'] ?? data['endTime']);
-
-    final isActive = displayStatus == 'active';
-
-    final statusColor = isActive ? Colors.green : primaryBlue;
+    final isActive = status.toLowerCase() == 'active';
+    final isCompleted = status.toLowerCase() == 'completed';
 
     return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(17),
+        border: Border.all(color: const Color(0xFFE5EBE6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,21 +190,15 @@ class _BookingsScreenState extends State<BookingsScreen> {
           Row(
             children: [
               Container(
-                width: 50,
-                height: 50,
+                height: 52,
+                width: 52,
                 decoration: BoxDecoration(
-                  color: lightBlue,
-                  borderRadius: BorderRadius.circular(14),
+                  color: const Color(0xFFE8F4EC),
+                  borderRadius: BorderRadius.circular(13),
                 ),
-                child: const Icon(
-                  Icons.pedal_bike_rounded,
-                  color: primaryBlue,
-                  size: 28,
-                ),
+                child: Icon(Icons.pedal_bike_rounded, color: green, size: 31),
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,154 +206,183 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     Text(
                       cycleName,
                       style: const TextStyle(
-                        color: darkBlue,
-                        fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '$cycleType • $location',
-                      style: const TextStyle(color: textGrey, fontSize: 11),
+                      (data['duration'] ?? 'Cycle booking').toString(),
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),
               ),
-
-              _statusChip(displayStatus, statusColor),
+              _statusBadge(status),
             ],
           ),
 
+          const SizedBox(height: 18),
+          const Divider(height: 1),
           const SizedBox(height: 15),
 
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.play_arrow_rounded,
-                      color: primaryBlue,
-                      size: 19,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        startText,
-                        style: const TextStyle(
-                          color: textDark,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+          _detailRow(
+            Icons.calendar_today_outlined,
+            'Date',
+            startDate == null ? '—' : _formatDate(startDate),
+          ),
+          const SizedBox(height: 11),
+          _detailRow(
+            Icons.access_time_rounded,
+            'Time',
+            startDate == null || endDate == null
+                ? '—'
+                : '${_formatTime(startDate)} - ${_formatTime(endDate)}',
+          ),
+          const SizedBox(height: 11),
+          _detailRow(Icons.timer_outlined, 'Duration', duration),
+          const SizedBox(height: 11),
+          _detailRow(Icons.payments_outlined, 'Price', 'FREE'),
+
+          if (!isCompleted) ...[
+            const SizedBox(height: 17),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  final cycleId = (data['cycleId'] ?? '').toString();
+
+                  if (cycleId.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Cycle information is missing for this booking.',
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.stop_rounded, color: textGrey, size: 19),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        endText,
-                        style: const TextStyle(
-                          color: textDark,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                    );
+                    return;
+                  }
+
+                  if (isActive) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => RideScreen(
+                          bookingId: bookingId,
+                          cycleId: cycleId,
+                          cycleName: cycleName,
                         ),
                       ),
-                    ),
-                  ],
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => QRScannerScreen(
+                          bookingId: bookingId,
+                          cycleId: cycleId,
+                          cycleName: cycleName,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                icon: Icon(
+                  isActive
+                      ? Icons.stop_circle_outlined
+                      : Icons.qr_code_scanner_rounded,
                 ),
-              ],
+                label: Text(isActive ? 'End Ride' : 'Scan QR to Start'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
             ),
-          ),
-
-          const SizedBox(height: 9),
-
-          Text(
-            'Booking ID: ${bookingId.length > 10 ? bookingId.substring(0, 10) : bookingId}',
-            style: const TextStyle(color: textGrey, fontSize: 10),
-          ),
+          ],
         ],
       ),
     );
   }
 
-  String _formatDateTime(DateTime date) {
-    final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
+  Widget _statusBadge(String status) {
+    final normalized = status.toLowerCase();
 
-    final minute = date.minute.toString().padLeft(2, '0');
+    final Color color;
+    final Color background;
 
-    final period = date.hour >= 12 ? 'PM' : 'AM';
-
-    return '${date.day}/${date.month}/${date.year} • $hour:$minute $period';
-  }
-
-  String _oldTime(dynamic value) {
-    if (value is Timestamp) {
-      final date = value.toDate();
-
-      final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
-
-      final minute = date.minute.toString().padLeft(2, '0');
-
-      final period = date.hour >= 12 ? 'PM' : 'AM';
-
-      return '$hour:$minute $period';
+    if (normalized == 'active') {
+      color = Colors.blue.shade700;
+      background = Colors.blue.shade50;
+    } else if (normalized == 'completed') {
+      color = green;
+      background = const Color(0xFFE6F5EA);
+    } else {
+      color = Colors.orange.shade800;
+      background = const Color(0xFFFFF2DD);
     }
 
-    return value?.toString() ?? '--:--';
-  }
-
-  Widget _statusChip(String status, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(15),
+        color: background,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        status == 'active' ? 'Active' : 'Upcoming',
+        status.toUpperCase(),
         style: TextStyle(
           color: color,
-          fontSize: 10,
           fontWeight: FontWeight.bold,
+          fontSize: 10,
         ),
       ),
     );
   }
 
-  Widget _emptyBookings() {
-    return const Center(
+  Widget _detailRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.grey, size: 18),
+        const SizedBox(width: 10),
+        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+        const Spacer(),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _emptyState() {
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(30),
+        padding: const EdgeInsets.all(30),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.receipt_long_outlined, color: primaryBlue, size: 55),
-            SizedBox(height: 18),
-            Text(
-              'No Active or Upcoming Rides',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: darkBlue,
-                fontSize: 19,
-                fontWeight: FontWeight.bold,
-              ),
+            Icon(
+              Icons.receipt_long_outlined,
+              size: 65,
+              color: Colors.grey.shade400,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 15),
             Text(
-              'Your current and upcoming bookings will appear here.',
+              'No $selectedTab bookings yet',
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 7),
+            const Text(
+              'Your cycle bookings will appear here.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: textGrey, fontSize: 13, height: 1.5),
+              style: TextStyle(color: Colors.grey),
             ),
           ],
         ),
@@ -426,41 +390,16 @@ class _BookingsScreenState extends State<BookingsScreen> {
     );
   }
 
-  Widget _messageCard(IconData icon, String title, String subtitle) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(25),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(25),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: primaryBlue, size: 42),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: darkBlue,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: textGrey, fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/'
+        '${date.month.toString().padLeft(2, '0')}/${date.year}';
+  }
+
+  String _formatTime(DateTime date) {
+    final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour >= 12 ? 'PM' : 'AM';
+
+    return '$hour:$minute $period';
   }
 }

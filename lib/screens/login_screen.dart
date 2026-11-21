@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'student_registration.dart';
 import 'home_screen.dart';
-import '../admin_dashboard.dart';
+import 'admin_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,15 +13,70 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
-  static const String adminEmail = 'admin@rentacycle.com';
+  static const Color primary = Color(0xFF176B50);
+
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      final user = credential.user;
+      final isAdmin = user?.email?.toLowerCase() == 'test@rentacycle.com';
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => isAdmin ? const AdminDashboard() : const HomeScreen(),
+        ),
+        (route) => false,
+      );
+    } on FirebaseAuthException catch (e) {
+      String message = 'Unable to login. Please try again.';
+
+      if (e.code == 'user-not-found') {
+        message = 'No account found with this email.';
+      } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        message = 'Incorrect email or password.';
+      } else if (e.code == 'invalid-email') {
+        message = 'Please enter a valid email address.';
+      } else if (e.code == 'too-many-requests') {
+        message = 'Too many attempts. Please try again later.';
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Something went wrong. Please try again.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -29,196 +85,120 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    final email = _emailController.text.trim().toLowerCase();
-    final password = _passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      _showMessage('Please enter email and password.');
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final credential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      final user = credential.user;
-
-      if (user == null) {
-        throw FirebaseAuthException(
-          code: 'user-not-found',
-          message: 'Login failed.',
-        );
-      }
-
-      if (!mounted) return;
-
-      // ============================================================
-      // ADMIN LOGIN
-      // ============================================================
-
-      if (user.email?.trim().toLowerCase() == adminEmail) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
-        );
-
-        return;
-      }
-
-      // ============================================================
-      // STUDENT / NORMAL USER LOGIN
-      // ============================================================
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-    } on FirebaseAuthException catch (e) {
-      String message = 'Login failed.';
-
-      if (e.code == 'user-not-found') {
-        message = 'No account found with this email.';
-      } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
-        message = 'Incorrect email or password.';
-      } else if (e.code == 'invalid-email') {
-        message = 'Please enter a valid email address.';
-      } else if (e.code == 'user-disabled') {
-        message = 'This account has been disabled.';
-      }
-
-      _showMessage(message);
-    } catch (e) {
-      _showMessage('Something went wrong. Please try again.');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFFF7F9F7),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF7F9F7),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 430),
+            padding: const EdgeInsets.symmetric(horizontal: 26),
+            child: Form(
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
                     child: Container(
-                      width: 82,
-                      height: 82,
+                      height: 75,
+                      width: 75,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEAF2FF),
-                        borderRadius: BorderRadius.circular(25),
+                        color: const Color(0xFFE5F2EA),
+                        borderRadius: BorderRadius.circular(22),
                       ),
                       child: const Icon(
-                        Icons.pedal_bike_rounded,
-                        color: Color(0xFF2563EB),
-                        size: 45,
+                        Icons.pedal_bike,
+                        size: 42,
+                        color: primary,
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 30),
 
                   const Center(
                     child: Text(
-                      'Welcome to RentaCycle',
-                      textAlign: TextAlign.center,
+                      'Welcome Back!',
                       style: TextStyle(
-                        color: Color(0xFF173B6C),
-                        fontSize: 27,
+                        fontSize: 29,
                         fontWeight: FontWeight.bold,
+                        color: Color(0xFF183B2E),
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 9),
 
                   const Center(
                     child: Text(
-                      'Login to continue',
-                      style: TextStyle(color: Color(0xFF7A8794), fontSize: 14),
+                      'Login to continue your campus journey.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Color(0xFF718078)),
                     ),
                   ),
 
-                  const SizedBox(height: 35),
+                  const SizedBox(height: 38),
 
                   const Text(
-                    'Email',
+                    'Email Address',
                     style: TextStyle(
-                      color: Color(0xFF334155),
                       fontWeight: FontWeight.w600,
+                      color: Color(0xFF183B2E),
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 9),
 
-                  TextField(
+                  TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       hintText: 'Enter your email',
                       prefixIcon: const Icon(
                         Icons.email_outlined,
-                        color: Color(0xFF2563EB),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        color: primary,
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your email.';
+                      }
+                      if (!RegExp(
+                        r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                      ).hasMatch(value.trim())) {
+                        return 'Enter a valid email address.';
+                      }
+                      return null;
+                    },
                   ),
 
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 22),
 
                   const Text(
                     'Password',
                     style: TextStyle(
-                      color: Color(0xFF334155),
                       fontWeight: FontWeight.w600,
+                      color: Color(0xFF183B2E),
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 9),
 
-                  TextField(
+                  TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    onSubmitted: (_) => _login(),
                     decoration: InputDecoration(
                       hintText: 'Enter your password',
                       prefixIcon: const Icon(
-                        Icons.lock_outline_rounded,
-                        color: Color(0xFF2563EB),
+                        Icons.lock_outline,
+                        color: primary,
                       ),
                       suffixIcon: IconButton(
                         onPressed: () {
@@ -228,56 +208,69 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         icon: Icon(
                           _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                         ),
                       ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password.';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _login,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text('Login'),
                     ),
                   ),
 
                   const SizedBox(height: 25),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _login,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Don't have an account? ",
+                        style: TextStyle(color: Color(0xFF718078)),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const StudentRegistrationScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            color: primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 23,
-                              height: 23,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text(
-                              'Login',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
+                    ],
                   ),
+
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
