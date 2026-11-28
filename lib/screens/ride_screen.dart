@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,14 @@ class RideScreen extends StatefulWidget {
 }
 
 class _RideScreenState extends State<RideScreen> {
-  final Color green = const Color(0xFF1B8A5A);
+  static const Color primary = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFFF1F8F8);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color borderColor = Color(0xFF456168);
+  static const Color surface = Color(0xFF314B51);
+  static const Color mutedText = Color(0xFFB5C9CC);
 
   Timer? timer;
   Duration elapsed = Duration.zero;
@@ -100,20 +108,29 @@ class _RideScreenState extends State<RideScreen> {
     final shouldEnd = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('End Your Ride?'),
+        backgroundColor: surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          'End Your Ride?',
+          style: TextStyle(color: darkTeal, fontWeight: FontWeight.bold),
+        ),
         content: const Text(
           'You will need to complete the parking and ride verification process.',
+          style: TextStyle(color: mutedText),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Continue Riding'),
+            child: const Text('Continue Riding', style: TextStyle(color: cyan)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: green,
+              backgroundColor: primary,
               foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             child: const Text('End Ride'),
           ),
@@ -165,52 +182,61 @@ class _RideScreenState extends State<RideScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F6),
+      backgroundColor: background,
       appBar: AppBar(
         title: const Text(
           'Active Ride',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: darkTeal,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: surface,
+        foregroundColor: darkTeal,
         elevation: 0,
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator(color: cyan))
             : errorMessage != null
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.all(25),
-                  child: Text(errorMessage!, textAlign: TextAlign.center),
+                  child: Text(
+                    errorMessage!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: darkTeal, fontSize: 15),
+                  ),
                 ),
               )
             : SingleChildScrollView(
                 padding: const EdgeInsets.all(22),
                 child: Column(
                   children: [
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 12),
 
                     Container(
-                      height: 90,
-                      width: 90,
+                      height: 88,
+                      width: 88,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE5F4E9),
+                        color: softTeal,
                         borderRadius: BorderRadius.circular(25),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.pedal_bike_rounded,
-                        color: green,
+                        color: cyan,
                         size: 52,
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     const Text(
                       'Enjoy Your Ride!',
                       style: TextStyle(
+                        color: darkTeal,
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                       ),
@@ -220,12 +246,11 @@ class _RideScreenState extends State<RideScreen> {
 
                     const Text(
                       'Your cycle is currently in use.',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: mutedText, fontSize: 14),
                     ),
 
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 28),
 
-                    // Ride timer
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
@@ -233,8 +258,19 @@ class _RideScreenState extends State<RideScreen> {
                         horizontal: 20,
                       ),
                       decoration: BoxDecoration(
-                        color: green,
+                        gradient: const LinearGradient(
+                          colors: [primary, surface, Color(0xFF3A555B)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(22),
+                        boxShadow: [
+                          BoxShadow(
+                            color: primary.withValues(alpha: 0.18),
+                            blurRadius: 18,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                       ),
                       child: Column(
                         children: [
@@ -268,17 +304,13 @@ class _RideScreenState extends State<RideScreen> {
                               vertical: 7,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white24,
+                              color: Colors.white.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  Icons.circle,
-                                  color: Colors.lightGreenAccent,
-                                  size: 9,
-                                ),
+                                Icon(Icons.circle, color: cyan, size: 9),
                                 SizedBox(width: 7),
                                 Text(
                                   'RIDE IN PROGRESS',
@@ -297,14 +329,20 @@ class _RideScreenState extends State<RideScreen> {
 
                     const SizedBox(height: 25),
 
-                    // Cycle details
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(19),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(17),
-                        border: Border.all(color: const Color(0xFFE5EBE6)),
+                        color: surface,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: borderColor),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.12),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,12 +350,13 @@ class _RideScreenState extends State<RideScreen> {
                           const Text(
                             'Ride Details',
                             style: TextStyle(
+                              color: darkTeal,
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
 
-                          const SizedBox(height: 18),
+                          const SizedBox(height: 20),
 
                           _detailRow(
                             Icons.pedal_bike_outlined,
@@ -325,7 +364,7 @@ class _RideScreenState extends State<RideScreen> {
                             widget.cycleName,
                           ),
 
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 17),
 
                           _detailRow(
                             Icons.confirmation_number_outlined,
@@ -333,7 +372,7 @@ class _RideScreenState extends State<RideScreen> {
                             widget.bookingId,
                           ),
 
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 17),
 
                           _detailRow(
                             Icons.access_time_rounded,
@@ -347,26 +386,27 @@ class _RideScreenState extends State<RideScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 22),
 
-                    // Information card
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEAF3FF),
-                        borderRadius: BorderRadius.circular(14),
+                        color: softTeal,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: borderColor),
                       ),
                       child: const Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.info_outline, color: Colors.blue),
+                          Icon(Icons.info_outline, color: cyan, size: 22),
                           SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               'When you finish riding, park the cycle in the designated area and complete the verification process.',
                               style: TextStyle(
-                                color: Colors.black87,
+                                color: darkTeal,
                                 fontSize: 13,
+                                height: 1.5,
                               ),
                             ),
                           ),
@@ -376,7 +416,6 @@ class _RideScreenState extends State<RideScreen> {
 
                     const SizedBox(height: 28),
 
-                    // End Ride button
                     SizedBox(
                       width: double.infinity,
                       height: 54,
@@ -391,10 +430,14 @@ class _RideScreenState extends State<RideScreen> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red.shade600,
+                          backgroundColor: primary,
                           foregroundColor: Colors.white,
+                          disabledBackgroundColor: primary.withValues(
+                            alpha: 0.5,
+                          ),
+                          elevation: 1,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                       ),
@@ -402,7 +445,6 @@ class _RideScreenState extends State<RideScreen> {
 
                     const SizedBox(height: 12),
 
-                    // Report Damage button
                     SizedBox(
                       width: double.infinity,
                       height: 54,
@@ -417,10 +459,10 @@ class _RideScreenState extends State<RideScreen> {
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.red,
-                          side: BorderSide(color: Colors.red.shade300),
+                          foregroundColor: cyan,
+                          side: const BorderSide(color: cyan, width: 1.3),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                       ),
@@ -437,15 +479,27 @@ class _RideScreenState extends State<RideScreen> {
   Widget _detailRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, color: green, size: 20),
-        const SizedBox(width: 12),
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+        Container(
+          height: 36,
+          width: 36,
+          decoration: BoxDecoration(
+            color: softTeal,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: cyan, size: 19),
+        ),
+        const SizedBox(width: 11),
+        Text(label, style: const TextStyle(color: mutedText, fontSize: 13)),
         const Spacer(),
         Flexible(
           child: Text(
             value,
             textAlign: TextAlign.end,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+            style: const TextStyle(
+              color: darkTeal,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
           ),
         ),
       ],

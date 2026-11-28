@@ -12,7 +12,14 @@ class MyBookingsScreen extends StatefulWidget {
 }
 
 class _MyBookingsScreenState extends State<MyBookingsScreen> {
-  final Color green = const Color(0xFF1B8A5A);
+  static const Color green = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFFF1F8F8);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color borderColor = Color(0xFF456168);
+  static const Color surface = Color(0xFF314B51);
+  static const Color mutedText = Color(0xFFB5C9CC);
 
   String selectedTab = 'Upcoming';
 
@@ -23,36 +30,68 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F6),
+      backgroundColor: background,
       appBar: AppBar(
         title: const Text(
           'My Bookings',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: darkTeal,
+            fontSize: 20,
+          ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: background,
+        foregroundColor: darkTeal,
         elevation: 0,
       ),
       body: user == null
-          ? const Center(child: Text('Please log in to view your bookings.'))
+          ? const Center(
+              child: Text(
+                'Please log in to view your bookings.',
+                style: TextStyle(color: darkTeal),
+              ),
+            )
           : SafeArea(
               child: Column(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(20, 22, 20, 16),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Your Rides',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF23717B), Color(0xFF314B51)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.pedal_bike_rounded, color: cyan, size: 32),
+                          SizedBox(height: 12),
+                          Text(
+                            'Your Rides',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'Keep track of all your cycle bookings.',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-
-                  // Booking category tabs
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -68,21 +107,26 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                               margin: const EdgeInsets.only(right: 7),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               decoration: BoxDecoration(
-                                color: isSelected ? green : Colors.white,
+                                color: isSelected ? green : surface,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: isSelected
-                                      ? green
-                                      : const Color(0xFFE3EAE5),
+                                  color: isSelected ? cyan : borderColor,
                                 ),
+                                boxShadow: isSelected
+                                    ? [
+                                        BoxShadow(
+                                          color: cyan.withValues(alpha: 0.12),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ]
+                                    : [],
                               ),
                               child: Text(
                                 tab,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : Colors.black87,
+                                  color: darkTeal,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13,
                                 ),
@@ -93,9 +137,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                       }).toList(),
                     ),
                   ),
-
                   const SizedBox(height: 18),
-
                   Expanded(
                     child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                       stream: FirebaseFirestore.instance
@@ -105,14 +147,17 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return const Center(
-                            child: Text('Unable to load your bookings.'),
+                            child: Text(
+                              'Unable to load your bookings.',
+                              style: TextStyle(color: darkTeal),
+                            ),
                           );
                         }
 
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(color: cyan),
                           );
                         }
 
@@ -177,12 +222,19 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     final isCompleted = status.toLowerCase() == 'completed';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(17),
-        border: Border.all(color: const Color(0xFFE5EBE6)),
+        color: surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,10 +245,14 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                 height: 52,
                 width: 52,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8F4EC),
-                  borderRadius: BorderRadius.circular(13),
+                  color: softTeal,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(Icons.pedal_bike_rounded, color: green, size: 31),
+                child: const Icon(
+                  Icons.pedal_bike_rounded,
+                  color: cyan,
+                  size: 31,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -206,6 +262,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                     Text(
                       cycleName,
                       style: const TextStyle(
+                        color: darkTeal,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -213,7 +270,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                     const SizedBox(height: 4),
                     Text(
                       (data['duration'] ?? 'Cycle booking').toString(),
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      style: const TextStyle(color: mutedText, fontSize: 12),
                     ),
                   ],
                 ),
@@ -221,17 +278,15 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
               _statusBadge(status),
             ],
           ),
-
           const SizedBox(height: 18),
-          const Divider(height: 1),
-          const SizedBox(height: 15),
-
+          const Divider(height: 1, color: borderColor),
+          const SizedBox(height: 16),
           _detailRow(
             Icons.calendar_today_outlined,
             'Date',
             startDate == null ? '—' : _formatDate(startDate),
           ),
-          const SizedBox(height: 11),
+          const SizedBox(height: 13),
           _detailRow(
             Icons.access_time_rounded,
             'Time',
@@ -239,13 +294,12 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                 ? '—'
                 : '${_formatTime(startDate)} - ${_formatTime(endDate)}',
           ),
-          const SizedBox(height: 11),
+          const SizedBox(height: 13),
           _detailRow(Icons.timer_outlined, 'Duration', duration),
-          const SizedBox(height: 11),
+          const SizedBox(height: 13),
           _detailRow(Icons.payments_outlined, 'Price', 'FREE'),
-
           if (!isCompleted) ...[
-            const SizedBox(height: 17),
+            const SizedBox(height: 18),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -291,14 +345,17 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                   isActive
                       ? Icons.stop_circle_outlined
                       : Icons.qr_code_scanner_rounded,
+                  size: 20,
                 ),
                 label: Text(isActive ? 'End Ride' : 'Scan QR to Start'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: green,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  elevation: 1,
+                  shadowColor: cyan.withValues(alpha: 0.15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(13),
                   ),
                 ),
               ),
@@ -313,23 +370,23 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     final normalized = status.toLowerCase();
 
     final Color color;
-    final Color background;
+    final Color badgeBackground;
 
     if (normalized == 'active') {
-      color = Colors.blue.shade700;
-      background = Colors.blue.shade50;
+      color = const Color(0xFF65C5E8);
+      badgeBackground = const Color(0xFF294F60);
     } else if (normalized == 'completed') {
-      color = green;
-      background = const Color(0xFFE6F5EA);
+      color = const Color(0xFF7BD5B0);
+      badgeBackground = const Color(0xFF294F4A);
     } else {
-      color = Colors.orange.shade800;
-      background = const Color(0xFFFFF2DD);
+      color = const Color(0xFFFFD27A);
+      badgeBackground = const Color(0xFF554A36);
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: background,
+        color: badgeBackground,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -346,15 +403,19 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
   Widget _detailRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, color: Colors.grey, size: 18),
+        Icon(icon, color: cyan, size: 18),
         const SizedBox(width: 10),
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+        Text(label, style: const TextStyle(color: mutedText, fontSize: 13)),
         const Spacer(),
         Flexible(
           child: Text(
             value,
             textAlign: TextAlign.end,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            style: const TextStyle(
+              color: darkTeal,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
           ),
         ),
       ],
@@ -368,21 +429,32 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.receipt_long_outlined,
-              size: 65,
-              color: Colors.grey.shade400,
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: softTeal,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.receipt_long_outlined,
+                size: 45,
+                color: cyan,
+              ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 18),
             Text(
               'No $selectedTab bookings yet',
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: darkTeal,
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 7),
             const Text(
               'Your cycle bookings will appear here.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: mutedText, fontSize: 13),
             ),
           ],
         ),

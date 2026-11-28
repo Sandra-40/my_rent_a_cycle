@@ -20,7 +20,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _isLoading = false;
 
-  static const Color primary = Color(0xFF176B50);
+  static const Color background = Color(0xFF263B40);
+  static const Color surface = Color(0xFF314B51);
+  static const Color primary = Color(0xFF23717B);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color textColor = Color(0xFFF1F8F8);
+  static const Color mutedText = Color(0xFFB5C9CC);
+  static const Color borderColor = Color(0xFF456168);
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
@@ -59,15 +65,16 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: surface),
+        );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Something went wrong. Please try again.'),
+            backgroundColor: surface,
           ),
         );
       }
@@ -85,16 +92,50 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  InputDecoration _inputDecoration({
+    required String hint,
+    required IconData icon,
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: mutedText, fontSize: 13),
+      prefixIcon: Icon(icon, color: cyan, size: 20),
+      suffixIcon: suffixIcon,
+      filled: true,
+      fillColor: surface,
+      contentPadding: const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: borderColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: borderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: cyan, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Colors.redAccent),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9F7),
+      backgroundColor: background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F9F7),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        backgroundColor: background,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: textColor),
       ),
       body: SafeArea(
         child: Center(
@@ -107,64 +148,57 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Center(
                     child: Container(
-                      height: 75,
-                      width: 75,
+                      height: 76,
+                      width: 76,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE5F2EA),
-                        borderRadius: BorderRadius.circular(22),
+                        color: primary,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: cyan.withValues(alpha: 0.35)),
                       ),
                       child: const Icon(
-                        Icons.pedal_bike,
+                        Icons.pedal_bike_rounded,
                         size: 42,
-                        color: primary,
+                        color: cyan,
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 30),
-
+                  const SizedBox(height: 25),
                   const Center(
                     child: Text(
-                      'Welcome Back!',
+                      'Welcome Back',
                       style: TextStyle(
                         fontSize: 29,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF183B2E),
+                        color: textColor,
+                        letterSpacing: -0.5,
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 9),
-
+                  const SizedBox(height: 8),
                   const Center(
                     child: Text(
-                      'Login to continue your campus journey.',
+                      'Sign in to continue your campus journey.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Color(0xFF718078)),
+                      style: TextStyle(fontSize: 14, color: mutedText),
                     ),
                   ),
-
-                  const SizedBox(height: 38),
-
+                  const SizedBox(height: 35),
                   const Text(
                     'Email Address',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF183B2E),
+                      color: textColor,
+                      fontSize: 14,
                     ),
                   ),
-
                   const SizedBox(height: 9),
-
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your email',
-                      prefixIcon: const Icon(
-                        Icons.email_outlined,
-                        color: primary,
-                      ),
+                    style: const TextStyle(color: textColor, fontSize: 14),
+                    decoration: _inputDecoration(
+                      hint: 'Enter your email',
+                      icon: Icons.email_outlined,
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -178,28 +212,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 22),
-
                   const Text(
                     'Password',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF183B2E),
+                      color: textColor,
+                      fontSize: 14,
                     ),
                   ),
-
                   const SizedBox(height: 9),
-
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your password',
-                      prefixIcon: const Icon(
-                        Icons.lock_outline,
-                        color: primary,
-                      ),
+                    style: const TextStyle(color: textColor, fontSize: 14),
+                    decoration: _inputDecoration(
+                      hint: 'Enter your password',
+                      icon: Icons.lock_outline,
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
@@ -210,6 +239,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           _obscurePassword
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
+                          color: mutedText,
+                          size: 20,
                         ),
                       ),
                     ),
@@ -220,35 +251,46 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 30),
-
                   SizedBox(
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primary,
+                        foregroundColor: textColor,
+                        disabledBackgroundColor: primary.withValues(alpha: 0.6),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
                       child: _isLoading
                           ? const SizedBox(
                               height: 22,
                               width: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: textColor,
                               ),
                             )
-                          : const Text('Login'),
+                          : const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
-
                   const SizedBox(height: 25),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
                         "Don't have an account? ",
-                        style: TextStyle(color: Color(0xFF718078)),
+                        style: TextStyle(color: mutedText, fontSize: 13),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -262,15 +304,26 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: const Text(
                           'Sign Up',
                           style: TextStyle(
-                            color: primary,
+                            color: cyan,
                             fontWeight: FontWeight.bold,
+                            fontSize: 13,
                           ),
                         ),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 30),
+                  const Center(
+                    child: Text(
+                      'RENTACYCLE  •  CAMPUS MOBILITY',
+                      style: TextStyle(
+                        fontSize: 10,
+                        letterSpacing: 1.1,
+                        color: mutedText,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
                 ],
               ),
             ),

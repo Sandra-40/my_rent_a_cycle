@@ -5,10 +5,15 @@ import 'student_registration.dart';
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
 
-  static const Color primary = Color(0xFF176B50);
-  static const Color darkGreen = Color(0xFF123D2E);
-  static const Color background = Color(0xFFF7F9F7);
-  static const Color mutedGreen = Color(0xFFE8F2EA);
+  static const Color primary = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFF1F2B2D);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color surface = Color(0xFF314B51);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color textColor = Color(0xFFF1F8F8);
+  static const Color mutedText = Color(0xFFB5C9CC);
+  static const Color borderColor = Color(0xFF456168);
 
   @override
   Widget build(BuildContext context) {
@@ -16,67 +21,58 @@ class LandingScreen extends StatelessWidget {
       backgroundColor: background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 22),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Container(
-                    height: 48,
-                    width: 48,
+                    height: 42,
+                    width: 42,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF238461), Color(0xFF14543E)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: primary.withValues(alpha: 0.2),
-                          blurRadius: 12,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
+                      color: surface,
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(color: borderColor),
                     ),
                     child: const Icon(
                       Icons.pedal_bike_rounded,
-                      color: Colors.white,
-                      size: 29,
+                      color: cyan,
+                      size: 24,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 11),
                   const Text(
                     'RentaCycle',
                     style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.7,
-                      color: darkGreen,
+                      color: textColor,
+                      fontSize: 21,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
                     ),
                   ),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                      horizontal: 10,
+                      vertical: 7,
                     ),
                     decoration: BoxDecoration(
-                      color: mutedGreen,
-                      borderRadius: BorderRadius.circular(30),
+                      color: softTeal,
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Row(
                       children: [
-                        Icon(Icons.eco_rounded, size: 15, color: primary),
-                        SizedBox(width: 5),
+                        Icon(Icons.circle, color: cyan, size: 7),
+                        SizedBox(width: 6),
                         Text(
-                          'Go Green',
+                          'CAMPUS',
                           style: TextStyle(
-                            color: primary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.8,
                           ),
                         ),
                       ],
@@ -84,167 +80,157 @@ class LandingScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 30),
               Container(
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 13,
-                  vertical: 8,
+                  horizontal: 20,
+                  vertical: 19,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE5F2EA),
-                  borderRadius: BorderRadius.circular(30),
+                  color: surface,
+                  borderRadius: BorderRadius.circular(23),
+                  border: Border.all(color: borderColor),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.directions_bike_rounded,
-                      size: 14,
-                      color: primary,
-                    ),
-                    SizedBox(width: 7),
-                    Text(
-                      'CAMPUS CYCLE RENTAL',
-                      style: TextStyle(
-                        color: primary,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.2,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
                       ),
+                      decoration: BoxDecoration(
+                        color: primary.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Text(
+                        'SMART CAMPUS MOBILITY',
+                        style: TextStyle(
+                          color: cyan,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 17),
+                    const Text(
+                      'Campus rides,\nmade simple.',
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 31,
+                        height: 1.16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.9,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Book a cycle, scan to unlock, and move around campus with ease.',
+                      style: TextStyle(
+                        color: mutedText,
+                        fontSize: 13,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Container(
+                        height: 145,
+                        width: 145,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: primary.withValues(alpha: 0.22),
+                          border: Border.all(
+                            color: cyan.withValues(alpha: 0.3),
+                            width: 1.3,
+                          ),
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 112,
+                              width: 112,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: cyan.withValues(alpha: 0.13),
+                                ),
+                              ),
+                            ),
+                            const Icon(
+                              Icons.pedal_bike_rounded,
+                              color: cyan,
+                              size: 84,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 17),
+                    const Center(
+                      child: Text(
+                        'Scan. Ride. Go.',
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 23),
+              const Text(
+                'BUILT FOR YOUR RIDE',
+                style: TextStyle(
+                  color: cyan,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.4,
+                ),
+              ),
+              const SizedBox(height: 11),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(17),
+                  border: Border.all(color: borderColor),
+                ),
+                child: const Column(
+                  children: [
+                    _FeatureRow(
+                      icon: Icons.qr_code_scanner_rounded,
+                      title: 'Quick unlock',
+                      subtitle: 'Scan and verify your ride.',
+                    ),
+                    SizedBox(height: 14),
+                    _FeatureRow(
+                      icon: Icons.location_on_outlined,
+                      title: 'Ride tracking',
+                      subtitle: 'Keep your journey organized.',
+                    ),
+                    SizedBox(height: 14),
+                    _FeatureRow(
+                      icon: Icons.eco_outlined,
+                      title: 'Eco-friendly',
+                      subtitle: 'A greener way to get around.',
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 22),
-              const Text(
-                'Your Campus.\nYour Cycle.\nYour Journey.',
-                style: TextStyle(
-                  fontSize: 40,
-                  height: 1.16,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -1.3,
-                  color: darkGreen,
-                ),
-              ),
-              const SizedBox(height: 17),
-              const Text(
-                'Make every campus journey easier. Find a cycle, book your ride and explore a greener way to get around.',
-                style: TextStyle(
-                  fontSize: 14,
-                  height: 1.8,
-                  color: Color(0xFF718078),
-                ),
-              ),
-              const SizedBox(height: 30),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(22, 25, 22, 23),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFE5F2E9), Color(0xFFD5E9DA)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Icon(
-                        Icons.eco_rounded,
-                        size: 65,
-                        color: primary.withValues(alpha: 0.08),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 28,
-                      left: 0,
-                      child: Icon(
-                        Icons.circle_outlined,
-                        size: 35,
-                        color: primary.withValues(alpha: 0.08),
-                      ),
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          height: 174,
-                          width: 174,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.85),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: primary.withValues(alpha: 0.10),
-                                blurRadius: 25,
-                                spreadRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.pedal_bike_rounded,
-                            size: 112,
-                            color: primary,
-                          ),
-                        ),
-                        const SizedBox(height: 22),
-                        const Text(
-                          'Ride More. Worry Less.',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.4,
-                            color: darkGreen,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'A smarter way to explore your campus.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF718078),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 36),
-              const Text(
-                'MADE FOR YOUR CAMPUS',
-                style: TextStyle(
-                  fontSize: 10,
-                  letterSpacing: 1.5,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF829087),
-                ),
-              ),
-              const SizedBox(height: 18),
-              const _FeatureRow(
-                icon: Icons.qr_code_scanner_rounded,
-                title: 'Quick QR Verification',
-                subtitle: 'Start your ride with simple verification.',
-              ),
-              const SizedBox(height: 18),
-              const _FeatureRow(
-                icon: Icons.location_on_rounded,
-                title: 'Track Your Ride',
-                subtitle: 'Keep track of your cycle journey.',
-              ),
-              const SizedBox(height: 18),
-              const _FeatureRow(
-                icon: Icons.eco_rounded,
-                title: 'Go Green',
-                subtitle: 'Choose a cleaner way to move around.',
-              ),
-              const SizedBox(height: 38),
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 51,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -255,12 +241,11 @@ class LandingScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primary,
-                    foregroundColor: Colors.white,
-                    elevation: 4,
-                    shadowColor: primary.withValues(alpha: 0.25),
+                    backgroundColor: cyan,
+                    foregroundColor: darkTeal,
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(17),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                   ),
                   child: const Row(
@@ -269,20 +254,20 @@ class LandingScreen extends StatelessWidget {
                       Text(
                         'Get Started',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(width: 9),
-                      Icon(Icons.arrow_forward_rounded, size: 19),
+                      SizedBox(width: 8),
+                      Icon(Icons.arrow_forward_rounded, size: 18),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 11),
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 51,
                 child: OutlinedButton(
                   onPressed: () {
                     Navigator.push(
@@ -291,44 +276,31 @@ class LandingScreen extends StatelessWidget {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: primary,
-                    side: const BorderSide(
-                      color: Color(0xFFB9D3C2),
-                      width: 1.4,
-                    ),
-                    backgroundColor: Colors.white,
+                    foregroundColor: textColor,
+                    backgroundColor: Colors.transparent,
+                    side: const BorderSide(color: borderColor, width: 1.2),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(17),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                   ),
                   child: const Text(
                     'Login',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 22),
               const Center(
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.pedal_bike_rounded,
-                      color: Color(0xFF9BAC9F),
-                      size: 20,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'RentaCycle  •  Campus Mobility',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFF98A49D),
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  'RENTA CYCLE  •  CAMPUS MOBILITY',
+                  style: TextStyle(
+                    color: mutedText,
+                    fontSize: 9,
+                    letterSpacing: 0.8,
+                  ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 18),
             ],
           ),
         ),
@@ -338,6 +310,11 @@ class LandingScreen extends StatelessWidget {
 }
 
 class _FeatureRow extends StatelessWidget {
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color textColor = Color(0xFFF1F8F8);
+  static const Color mutedText = Color(0xFFB5C9CC);
+  static const Color softTeal = Color(0xFF3A555B);
+
   final IconData icon;
   final String title;
   final String subtitle;
@@ -350,63 +327,43 @@ class _FeatureRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(19),
-        border: Border.all(color: const Color(0xFFEDF1ED)),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF26352D).withValues(alpha: 0.035),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+    return Row(
+      children: [
+        Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            color: softTeal,
+            borderRadius: BorderRadius.circular(11),
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 47,
-            width: 47,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE8F2EA),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Icon(icon, color: const Color(0xFF176B50), size: 23),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 13,
-                    color: Color(0xFF183B2E),
-                  ),
+          child: Icon(icon, color: cyan, size: 21),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: textColor,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    height: 1.4,
-                    color: Color(0xFF829087),
-                  ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  color: mutedText,
+                  fontSize: 11,
+                  height: 1.35,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const Icon(
-            Icons.arrow_outward_rounded,
-            color: Color(0xFF9BAC9F),
-            size: 17,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

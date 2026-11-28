@@ -14,10 +14,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
   int selectedIndex = 0;
   int maintenanceTab = 0;
 
-  final Color green = const Color(0xFF176B50);
-  final Color lightGreen = const Color(0xFFE8F3EC);
-  final Color background = const Color(0xFFF5F8F6);
-  final Color darkText = const Color(0xFF26352D);
+  static const Color green = Color(0xFF23717B);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color surface = Color(0xFF314B51);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color darkText = Color(0xFFF1F8F8);
+  static const Color mutedText = Color(0xFFB5C9CC);
+  static const Color borderColor = Color(0xFF456168);
+
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
@@ -41,8 +46,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
-        backgroundColor: green,
-        foregroundColor: Colors.white,
+        backgroundColor: surface,
+        foregroundColor: darkText,
         elevation: 0,
         title: Text(
           titles[selectedIndex],
@@ -60,40 +65,44 @@ class _AdminDashboardState extends State<AdminDashboard> {
       body: IndexedStack(index: selectedIndex, children: pages),
       bottomNavigationBar: NavigationBar(
         height: 68,
-        backgroundColor: Colors.white,
-        indicatorColor: lightGreen,
+        backgroundColor: surface,
+        indicatorColor: green.withValues(alpha: 0.35),
         selectedIndex: selectedIndex,
         onDestinationSelected: (index) {
           setState(() => selectedIndex = index);
         },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard_rounded),
-            label: 'Home',
+        destinations: [
+          _navItem(Icons.dashboard_outlined, Icons.dashboard_rounded, 'Home'),
+          _navItem(
+            Icons.calendar_month_outlined,
+            Icons.calendar_month_rounded,
+            'Bookings',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_month_outlined),
-            selectedIcon: Icon(Icons.calendar_month_rounded),
-            label: 'Bookings',
+          _navItem(
+            Icons.location_on_outlined,
+            Icons.location_on_rounded,
+            'Track',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.location_on_outlined),
-            selectedIcon: Icon(Icons.location_on_rounded),
-            label: 'Track',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.build_outlined),
-            selectedIcon: Icon(Icons.build_rounded),
-            label: 'Maintenance',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline_rounded),
-            selectedIcon: Icon(Icons.person_rounded),
-            label: 'Profile',
+          _navItem(Icons.build_outlined, Icons.build_rounded, 'Maintenance'),
+          _navItem(
+            Icons.person_outline_rounded,
+            Icons.person_rounded,
+            'Profile',
           ),
         ],
       ),
+    );
+  }
+
+  NavigationDestination _navItem(
+    IconData icon,
+    IconData selectedIcon,
+    String label,
+  ) {
+    return NavigationDestination(
+      icon: Icon(icon, color: mutedText),
+      selectedIcon: Icon(selectedIcon, color: cyan),
+      label: label,
     );
   }
 
@@ -103,7 +112,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 19,
             fontWeight: FontWeight.bold,
             color: darkText,
@@ -113,7 +122,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: const TextStyle(color: Colors.grey, fontSize: 13),
+            style: const TextStyle(color: mutedText, fontSize: 12),
           ),
         ],
       ],
@@ -122,20 +131,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   Widget _statCard(String title, String value, IconData icon, Color color) {
     return Container(
-      height: 105,
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+      constraints: const BoxConstraints(minHeight: 91),
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
       decoration: _cardDecoration(),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(11),
+            height: 43,
+            width: 43,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: color, size: 23),
+            child: Icon(icon, color: color, size: 22),
           ),
-          const SizedBox(width: 13),
+          const SizedBox(width: 11),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -143,8 +153,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
               children: [
                 Text(
                   value,
-                  style: TextStyle(
-                    fontSize: 24,
+                  style: const TextStyle(
+                    fontSize: 23,
                     fontWeight: FontWeight.bold,
                     color: darkText,
                   ),
@@ -154,7 +164,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(fontSize: 11, color: mutedText),
                 ),
               ],
             ),
@@ -210,15 +220,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 Container(
                   padding: const EdgeInsets.all(21),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [green, const Color(0xFF104D3A)],
+                    gradient: const LinearGradient(
+                      colors: [green, Color(0xFF314B51)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: green.withValues(alpha: 0.16),
+                        color: green.withValues(alpha: 0.18),
                         blurRadius: 16,
                         offset: const Offset(0, 7),
                       ),
@@ -232,19 +242,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           Icon(
                             Icons.waving_hand_rounded,
                             color: Color(0xFFFFD27D),
-                            size: 23,
+                            size: 22,
                           ),
                           SizedBox(width: 9),
                           Text(
                             'Welcome back!',
                             style: TextStyle(
                               color: Colors.white70,
-                              fontSize: 14,
+                              fontSize: 13,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 11),
                       const Text(
                         'Administrator',
                         style: TextStyle(
@@ -258,11 +268,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         'Manage your campus bicycle fleet from one place.',
                         style: TextStyle(
                           color: Colors.white70,
-                          fontSize: 13,
+                          fontSize: 12,
                           height: 1.5,
                         ),
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 17),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 13,
@@ -286,7 +296,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 13,
+                                fontSize: 12,
                               ),
                             ),
                           ],
@@ -318,7 +328,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             'Total Cycles',
                             cycles.length.toString(),
                             Icons.pedal_bike,
-                            const Color(0xFF2878B5),
+                            cyan,
                           ),
                         ),
                         SizedBox(
@@ -327,7 +337,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             'Available',
                             available.toString(),
                             Icons.check_circle_outline,
-                            green,
+                            cyan,
                           ),
                         ),
                         SizedBox(
@@ -336,7 +346,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             'Booked',
                             booked.toString(),
                             Icons.calendar_month,
-                            const Color(0xFF7456A6),
+                            const Color(0xFFB69AE5),
                           ),
                         ),
                         SizedBox(
@@ -345,7 +355,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             'In Use',
                             inUse.toString(),
                             Icons.directions_bike,
-                            Colors.orange,
+                            const Color(0xFFFFB45C),
                           ),
                         ),
                         SizedBox(
@@ -354,7 +364,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             'Maintenance',
                             maintenance.toString(),
                             Icons.build_circle_outlined,
-                            Colors.red,
+                            const Color(0xFFFF8585),
                           ),
                         ),
                         SizedBox(
@@ -363,7 +373,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             'Total Bookings',
                             totalBookings.toString(),
                             Icons.receipt_long,
-                            const Color(0xFF2878B5),
+                            cyan,
                           ),
                         ),
                       ],
@@ -410,29 +420,35 @@ class _AdminDashboardState extends State<AdminDashboard> {
     VoidCallback onTap,
   ) {
     return Card(
-      color: Colors.white,
+      color: surface,
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 11),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
-        side: BorderSide(color: Colors.grey.shade100),
+        side: const BorderSide(color: borderColor),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: lightGreen,
+            color: softTeal,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: green),
+          child: Icon(icon, color: cyan),
         ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, color: darkText),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(fontSize: 11, color: mutedText),
+        ),
         trailing: const Icon(
           Icons.arrow_forward_ios,
-          size: 15,
-          color: Colors.grey,
+          size: 14,
+          color: mutedText,
         ),
         onTap: onTap,
       ),
@@ -446,13 +462,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
           .orderBy('createdAt', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return _errorState('Unable to load bookings.');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.hasError) return _errorState('Unable to load bookings.');
+        if (snapshot.connectionState == ConnectionState.waiting)
           return _loadingState();
-        }
 
         final bookings = snapshot.data?.docs ?? [];
 
@@ -460,66 +472,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(18, 18, 18, 25),
           children: [
-            Container(
-              padding: const EdgeInsets.all(19),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [green, const Color(0xFF12543E)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Booking Management',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 7),
-                        const Text(
-                          'Monitor and review student cycle bookings.',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                            height: 1.5,
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                          '${bookings.length} Total Bookings',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: 65,
-                    width: 65,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: const Icon(
-                      Icons.calendar_month_rounded,
-                      color: Colors.white,
-                      size: 34,
-                    ),
-                  ),
-                ],
-              ),
+            _headerCard(
+              'Booking Management',
+              'Monitor and review student cycle bookings.',
+              Icons.calendar_month_rounded,
+              '${bookings.length} Total Bookings',
             ),
             const SizedBox(height: 25),
             _sectionTitle(
@@ -555,39 +512,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       '${data['durationMinutes'] ?? 'Not available'} minutes';
 
                   return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(17),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(19),
-                      border: Border.all(color: const Color(0xFFE6ECE7)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.025),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
+                    margin: const EdgeInsets.only(bottom: 15),
+                    padding: const EdgeInsets.all(16),
+                    decoration: _cardDecoration(),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Container(
-                              height: 47,
-                              width: 47,
-                              decoration: BoxDecoration(
-                                color: lightGreen,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Icon(
-                                Icons.pedal_bike_rounded,
-                                color: green,
-                                size: 26,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
+                            _iconBox(Icons.pedal_bike_rounded),
+                            const SizedBox(width: 11),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -596,9 +530,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                     cycle,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: darkText,
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -608,25 +542,25 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
-                                      color: Colors.grey,
+                                      color: mutedText,
                                       fontSize: 10,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 5),
                             _statusChip(status),
                           ],
                         ),
-                        const SizedBox(height: 17),
-                        const Divider(height: 1),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 16),
+                        _divider(),
+                        const SizedBox(height: 14),
                         _detailHeading(
                           Icons.person_outline_rounded,
                           'STUDENT DETAILS',
                         ),
-                        const SizedBox(height: 13),
+                        const SizedBox(height: 12),
                         _infoRow(
                           Icons.person_outline,
                           'Name',
@@ -641,14 +575,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           admission,
                         ),
                         _infoRow(Icons.email_outlined, 'Email', email),
-                        const SizedBox(height: 6),
-                        const Divider(height: 1),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 5),
+                        _divider(),
+                        const SizedBox(height: 14),
                         _detailHeading(
                           Icons.calendar_month_outlined,
                           'BOOKING DETAILS',
                         ),
-                        const SizedBox(height: 13),
+                        const SizedBox(height: 12),
                         _infoRow(
                           Icons.login_rounded,
                           'Start Time',
@@ -675,15 +609,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget _detailHeading(IconData icon, String title) {
     return Row(
       children: [
-        Icon(icon, color: green, size: 18),
+        Icon(icon, color: cyan, size: 17),
         const SizedBox(width: 8),
         Text(
           title,
           style: const TextStyle(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.7,
-            color: Color(0xFF718078),
+            color: mutedText,
           ),
         ),
       ],
@@ -694,13 +628,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: firestore.collection('cycles').snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
+        if (snapshot.hasError)
           return _errorState('Unable to load cycle information.');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting)
           return _loadingState();
-        }
 
         final cycles = snapshot.data?.docs ?? [];
         int available = 0;
@@ -712,7 +643,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
           final status = (cycle.data()['status'] ?? '')
               .toString()
               .toLowerCase();
-
           if (status == 'available') {
             available++;
           } else if (status == 'booked' || status == 'upcoming') {
@@ -738,22 +668,22 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ),
                 IconButton(
                   onPressed: () => setState(() {}),
-                  icon: Icon(Icons.refresh_rounded, color: green),
+                  icon: const Icon(Icons.refresh_rounded, color: cyan),
                   tooltip: 'Refresh tracking information',
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 15),
             Container(
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF5E6),
+                color: softTeal,
                 borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: const Color(0xFFFFE0B2)),
+                border: Border.all(color: borderColor),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.satellite_alt, color: Colors.orange, size: 25),
+                  Icon(Icons.satellite_alt, color: cyan, size: 25),
                   SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -762,7 +692,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         Text(
                           'GPS Integration Pending',
                           style: TextStyle(
-                            color: Color(0xFF9A5B00),
+                            color: darkText,
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                           ),
@@ -771,8 +701,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         Text(
                           'Live cycle locations will be available after GPS setup.',
                           style: TextStyle(
-                            color: Color(0xFF9A5B00),
+                            color: mutedText,
                             fontSize: 11,
+                            height: 1.4,
                           ),
                         ),
                       ],
@@ -781,167 +712,43 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ],
               ),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 23),
             _sectionTitle(
               'Fleet Location Map',
               subtitle: 'Map preview for future GPS integration',
             ),
             const SizedBox(height: 12),
-            Container(
-              height: 215,
-              decoration: BoxDecoration(
-                color: const Color(0xFFEAF1EC),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFFDCE7DF)),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Stack(
-                children: [
-                  Positioned(
-                    left: -35,
-                    top: 65,
-                    child: Transform.rotate(
-                      angle: -0.25,
-                      child: Container(
-                        width: 450,
-                        height: 30,
-                        color: Colors.white.withValues(alpha: 0.75),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 55,
-                    top: -35,
-                    child: Transform.rotate(
-                      angle: 0.7,
-                      child: Container(
-                        width: 25,
-                        height: 330,
-                        color: Colors.white.withValues(alpha: 0.75),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: -50,
-                    bottom: 45,
-                    child: Transform.rotate(
-                      angle: -0.5,
-                      child: Container(
-                        width: 300,
-                        height: 22,
-                        color: Colors.white.withValues(alpha: 0.75),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 20,
-                    top: 18,
-                    child: _mapMarker(Icons.pedal_bike, green),
-                  ),
-                  Positioned(
-                    right: 45,
-                    top: 55,
-                    child: _mapMarker(Icons.location_on, Colors.orange),
-                  ),
-                  Positioned(
-                    left: 105,
-                    bottom: 25,
-                    child: _mapMarker(Icons.pedal_bike, green),
-                  ),
-                  Positioned(
-                    right: 90,
-                    bottom: 20,
-                    child: _mapMarker(Icons.location_on, Colors.blue),
-                  ),
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 19,
-                        vertical: 15,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.94),
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.06),
-                            blurRadius: 12,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.map_outlined, color: green, size: 29),
-                          const SizedBox(height: 7),
-                          const Text(
-                            'Map Preview',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Color(0xFF26352D),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Live coordinates unavailable',
-                            style: TextStyle(color: Colors.grey, fontSize: 10),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 10,
-                    top: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 9,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.circle, color: Colors.orange, size: 8),
-                          SizedBox(width: 5),
-                          Text(
-                            'Preview',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 23),
+            _buildMapPreview(),
+            const SizedBox(height: 24),
             _sectionTitle(
               'Fleet Status',
               subtitle: 'Current cycle status from Firestore',
             ),
             const SizedBox(height: 13),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.8,
-              children: [
-                _smallStatusCard('Available', available, green),
-                _smallStatusCard('Booked', booked, const Color(0xFF2878B5)),
-                _smallStatusCard('In Use', inUse, Colors.orange),
-                _smallStatusCard('Maintenance', maintenance, Colors.red),
-              ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final columns = constraints.maxWidth >= 600 ? 4 : 2;
+                return GridView.count(
+                  crossAxisCount: columns,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 11,
+                  mainAxisSpacing: 11,
+                  childAspectRatio: columns == 2 ? 2.15 : 1.8,
+                  children: [
+                    _smallStatusCard('Available', available, cyan),
+                    _smallStatusCard('Booked', booked, const Color(0xFFB69AE5)),
+                    _smallStatusCard('In Use', inUse, const Color(0xFFFFB45C)),
+                    _smallStatusCard(
+                      'Maintenance',
+                      maintenance,
+                      const Color(0xFFFF8585),
+                    ),
+                  ],
+                );
+              },
             ),
-            const SizedBox(height: 23),
+            const SizedBox(height: 25),
             _sectionTitle(
               'Cycle Information',
               subtitle: '${cycles.length} registered cycles',
@@ -960,29 +767,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   data['parkingAddress']?.toString() ??
                   data['location']?.toString() ??
                   'Not recorded';
-              final battery = data['batteryPercent'] ?? data['batteryLevel'];
-              final speed = data['speed'];
-              final imei = data['imei'] ?? data['IMEI'];
-              final gps =
-                  data['gpsStatus'] ??
-                  (data['isOnline'] == null
-                      ? null
-                      : (data['isOnline'] == true ? 'Online' : 'Offline'));
-
-              final batteryValue = battery == null
-                  ? 'Not available'
-                  : battery.toString().contains('%')
-                  ? battery.toString()
-                  : '${battery.toString()}%';
-
-              final gpsText = gps?.toString() ?? 'Not available';
-              final isOnline =
-                  gpsText.toLowerCase() == 'online' ||
-                  gpsText.toLowerCase() == 'on' ||
-                  gpsText.toLowerCase() == 'true';
 
               return Container(
-                margin: const EdgeInsets.only(bottom: 15),
+                margin: const EdgeInsets.only(bottom: 13),
                 padding: const EdgeInsets.all(16),
                 decoration: _cardDecoration(),
                 child: Column(
@@ -990,23 +777,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(11),
-                          decoration: BoxDecoration(
-                            color: lightGreen,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(Icons.pedal_bike, color: green, size: 23),
-                        ),
-                        const SizedBox(width: 12),
+                        _iconBox(Icons.pedal_bike_rounded),
+                        const SizedBox(width: 11),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 data['name']?.toString() ?? 'Campus Cycle',
-                                style: TextStyle(
-                                  fontSize: 15,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: darkText,
                                 ),
@@ -1014,87 +796,59 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               const SizedBox(height: 4),
                               Text(
                                 'ID: ${cycle.id}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  color: Colors.grey,
+                                  color: mutedText,
                                   fontSize: 10,
                                 ),
                               ),
                             ],
                           ),
                         ),
+                        const SizedBox(width: 5),
                         _statusChip(status),
                       ],
                     ),
-                    const SizedBox(height: 17),
-                    const Divider(height: 1),
                     const SizedBox(height: 15),
-                    _trackingInfoTile(
-                      Icons.location_on_outlined,
-                      'Parking Location',
-                      location,
-                    ),
-                    _trackingInfoTile(
-                      Icons.memory,
-                      'IMEI Number',
-                      imei?.toString() ?? 'Not available',
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _trackingMetric(
-                            Icons.battery_std,
-                            'Battery',
-                            batteryValue,
-                            green,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _trackingMetric(
-                            Icons.speed,
-                            'Speed',
-                            speed == null ? 'Not available' : '$speed km/h',
-                            Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 11),
+                    _divider(),
+                    const SizedBox(height: 14),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 11,
-                      ),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: isOnline
-                            ? const Color(0xFFE8F5E9)
-                            : const Color(0xFFFFF3E0),
-                        borderRadius: BorderRadius.circular(11),
+                        color: softTeal,
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.gps_fixed,
-                            size: 18,
-                            color: isOnline ? green : Colors.orange,
+                          const Icon(
+                            Icons.location_on_outlined,
+                            color: cyan,
+                            size: 19,
                           ),
-                          const SizedBox(width: 9),
-                          const Expanded(
-                            child: Text(
-                              'GPS Connection',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            gpsText,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: isOnline ? green : Colors.orange,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Parking Location',
+                                  style: TextStyle(
+                                    color: mutedText,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  location,
+                                  style: const TextStyle(
+                                    color: darkText,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -1111,51 +865,176 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Widget _smallStatusCard(String title, int value, Color color) {
+  Widget _buildMapPreview() {
     return Container(
-      padding: const EdgeInsets.all(14),
+      height: 205,
+      decoration: BoxDecoration(
+        color: softTeal,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          Positioned(
+            left: -35,
+            top: 65,
+            child: Transform.rotate(
+              angle: -0.25,
+              child: Container(
+                width: 450,
+                height: 25,
+                color: Colors.white.withValues(alpha: 0.07),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 55,
+            top: -35,
+            child: Transform.rotate(
+              angle: 0.7,
+              child: Container(
+                width: 22,
+                height: 330,
+                color: Colors.white.withValues(alpha: 0.07),
+              ),
+            ),
+          ),
+          Positioned(
+            right: -50,
+            bottom: 45,
+            child: Transform.rotate(
+              angle: -0.5,
+              child: Container(
+                width: 300,
+                height: 20,
+                color: Colors.white.withValues(alpha: 0.07),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 20,
+            top: 18,
+            child: _mapMarker(Icons.pedal_bike, cyan),
+          ),
+          Positioned(
+            right: 45,
+            top: 55,
+            child: _mapMarker(Icons.location_on, const Color(0xFFFFB45C)),
+          ),
+          Positioned(
+            left: 105,
+            bottom: 25,
+            child: _mapMarker(Icons.pedal_bike, cyan),
+          ),
+          Positioned(
+            right: 90,
+            bottom: 20,
+            child: _mapMarker(Icons.location_on, cyan),
+          ),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 19, vertical: 14),
+              decoration: BoxDecoration(
+                color: surface,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: borderColor),
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.map_outlined, color: cyan, size: 27),
+                  SizedBox(height: 7),
+                  Text(
+                    'Map Preview',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: darkText,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Live coordinates unavailable',
+                    style: TextStyle(color: mutedText, fontSize: 10),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            right: 10,
+            top: 10,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+              decoration: BoxDecoration(
+                color: surface,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.circle, color: Color(0xFFFFB45C), size: 8),
+                  SizedBox(width: 5),
+                  Text(
+                    'Preview',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: darkText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _smallStatusCard(String title, int value, Color color) {
+    final icon = title == 'Available'
+        ? Icons.check_circle_outline
+        : title == 'Booked'
+        ? Icons.calendar_month
+        : title == 'In Use'
+        ? Icons.directions_bike
+        : Icons.build_circle_outlined;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
       decoration: _cardDecoration(),
       child: Row(
         children: [
           Container(
-            width: 42,
-            height: 42,
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+              color: color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(11),
             ),
-            child: Icon(
-              title == 'Available'
-                  ? Icons.check_circle_outline
-                  : title == 'Booked'
-                  ? Icons.calendar_month
-                  : title == 'In Use'
-                  ? Icons.directions_bike
-                  : Icons.build_circle_outlined,
-              color: color,
-              size: 22,
-            ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 9),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   value.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: darkText,
                     fontWeight: FontWeight.bold,
-                    fontSize: 22,
+                    fontSize: 21,
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 2),
                 Text(
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.grey, fontSize: 11),
+                  style: const TextStyle(color: mutedText, fontSize: 10),
                 ),
               ],
             ),
@@ -1169,86 +1048,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Container(
       padding: const EdgeInsets.all(7),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: surface,
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.10), blurRadius: 8),
-        ],
+        border: Border.all(color: borderColor),
       ),
-      child: Icon(icon, color: color, size: 19),
-    );
-  }
-
-  Widget _trackingInfoTile(IconData icon, String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 13),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: green, size: 18),
-          const SizedBox(width: 10),
-          SizedBox(
-            width: 105,
-            child: Text(
-              title,
-              style: const TextStyle(color: Colors.grey, fontSize: 11),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: Color(0xFF26352D),
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _trackingMetric(
-    IconData icon,
-    String title,
-    String value,
-    Color color,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(11),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F9F7),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 17, color: color),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(color: Colors.grey, fontSize: 10),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: Color(0xFF26352D),
-            ),
-          ),
-        ],
-      ),
+      child: Icon(icon, color: color, size: 18),
     );
   }
 
@@ -1259,13 +1063,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
           .orderBy('reportedAt', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
+        if (snapshot.hasError)
           return _errorState('Unable to load damage reports.');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting)
           return _loadingState();
-        }
 
         final reports = snapshot.data?.docs ?? [];
 
@@ -1292,21 +1093,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
           padding: const EdgeInsets.fromLTRB(18, 18, 18, 25),
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(19),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [green, const Color(0xFF104D3A)],
+                gradient: const LinearGradient(
+                  colors: [green, Color(0xFF314B51)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: green.withValues(alpha: 0.13),
-                    blurRadius: 14,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1321,7 +1115,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               'Maintenance Center',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 20,
+                                fontSize: 19,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -1330,7 +1124,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               'Monitor damage reports and manage cycle repairs.',
                               style: TextStyle(
                                 color: Colors.white70,
-                                fontSize: 12,
+                                fontSize: 11,
                                 height: 1.5,
                               ),
                             ),
@@ -1338,21 +1132,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         ),
                       ),
                       Container(
-                        height: 55,
-                        width: 55,
+                        height: 51,
+                        width: 51,
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.white.withValues(alpha: 0.14),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                         child: const Icon(
                           Icons.build_circle_outlined,
                           color: Colors.white,
-                          size: 31,
+                          size: 29,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
                   Row(
                     children: [
                       Expanded(
@@ -1362,7 +1156,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           Icons.warning_amber_rounded,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 11),
                       Expanded(
                         child: _maintenanceSummary(
                           'Resolved',
@@ -1380,12 +1174,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
               'Repair Records',
               subtitle: 'Review and manage reported cycle damage',
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: const Color(0xFFECEFED),
-                borderRadius: BorderRadius.circular(14),
+                color: softTeal,
+                borderRadius: BorderRadius.circular(13),
               ),
               child: Row(
                 children: [
@@ -1394,10 +1188,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ],
               ),
             ),
-            const SizedBox(height: 17),
+            const SizedBox(height: 16),
             if (displayedReports.isEmpty)
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 35),
+                padding: const EdgeInsets.symmetric(vertical: 30),
                 decoration: _cardDecoration(),
                 child: _emptyState(
                   maintenanceTab == 0
@@ -1415,8 +1209,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 child: Text(
                   '${displayedReports.length} ${maintenanceTab == 0 ? 'pending' : 'completed'} report${displayedReports.length == 1 ? '' : 's'}',
                   style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
+                    color: mutedText,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1431,16 +1225,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   Widget _maintenanceSummary(String title, String count, IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(13),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.13),
-        borderRadius: BorderRadius.circular(13),
+        color: Colors.white.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 22),
-          const SizedBox(width: 10),
+          Icon(icon, color: Colors.white, size: 21),
+          const SizedBox(width: 9),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1449,7 +1243,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   count,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 21,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1490,7 +1284,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   style: TextStyle(
                     color: selected ? Colors.white : darkText,
                     fontWeight: FontWeight.w600,
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
                 ),
               ),
@@ -1500,14 +1294,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 decoration: BoxDecoration(
                   color: selected
                       ? Colors.white.withValues(alpha: 0.2)
-                      : Colors.grey.shade300,
+                      : surface,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   count.toString(),
                   style: TextStyle(
                     color: selected ? Colors.white : darkText,
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1526,43 +1320,30 @@ class _AdminDashboardState extends State<AdminDashboard> {
     final photoUrl = data['photoUrl']?.toString();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.all(17),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(19),
-        border: Border.all(color: const Color(0xFFE6ECE7)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.025),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(16),
+      decoration: _cardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                height: 46,
-                width: 46,
+                height: 44,
+                width: 44,
                 decoration: BoxDecoration(
-                  color: isOpen
-                      ? const Color(0xFFFFF1E5)
-                      : const Color(0xFFE8F3EC),
-                  borderRadius: BorderRadius.circular(13),
+                  color: isOpen ? const Color(0xFF604A37) : softTeal,
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   isOpen
                       ? Icons.warning_amber_rounded
                       : Icons.check_circle_outline,
-                  color: isOpen ? Colors.orange : green,
-                  size: 25,
+                  color: isOpen ? const Color(0xFFFFB45C) : cyan,
+                  size: 24,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 11),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1571,19 +1352,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       data['cycleName']?.toString() ?? 'Campus Cycle',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: darkText,
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                    const Text(
                       'Damage Report',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: mutedText, fontSize: 10),
                     ),
                   ],
                 ),
@@ -1592,13 +1370,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
               _statusChip(status),
             ],
           ),
-          const SizedBox(height: 17),
-          const Divider(height: 1),
           const SizedBox(height: 15),
+          _divider(),
+          const SizedBox(height: 14),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F9F7),
+              color: softTeal,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -1621,50 +1399,46 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 15),
           const Text(
             'Issue Description',
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF26352D),
+              color: darkText,
             ),
           ),
           const SizedBox(height: 7),
           Text(
             data['description']?.toString() ?? 'No description provided.',
-            style: const TextStyle(
-              color: Color(0xFF65736B),
-              fontSize: 12,
-              height: 1.6,
-            ),
+            style: const TextStyle(color: mutedText, fontSize: 12, height: 1.6),
           ),
           if (photoUrl != null && photoUrl.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 15),
             const Text(
               'Attached Damage Photo',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF26352D),
+                color: darkText,
               ),
             ),
             const SizedBox(height: 9),
             ClipRRect(
-              borderRadius: BorderRadius.circular(13),
+              borderRadius: BorderRadius.circular(12),
               child: Image.network(
                 photoUrl,
-                height: 185,
+                height: 180,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, progress) {
                   if (progress == null) return child;
                   return Container(
-                    height: 185,
+                    height: 180,
                     alignment: Alignment.center,
-                    color: const Color(0xFFF1F4F2),
+                    color: softTeal,
                     child: CircularProgressIndicator(
-                      color: green,
+                      color: cyan,
                       value: progress.expectedTotalBytes == null
                           ? null
                           : progress.cumulativeBytesLoaded /
@@ -1678,17 +1452,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     width: double.infinity,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(13),
+                      color: softTeal,
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.broken_image_outlined, color: Colors.grey),
+                        Icon(Icons.broken_image_outlined, color: mutedText),
                         SizedBox(height: 5),
                         Text(
                           'Unable to load damage photo.',
-                          style: TextStyle(color: Colors.grey, fontSize: 11),
+                          style: TextStyle(color: mutedText, fontSize: 10),
                         ),
                       ],
                     ),
@@ -1698,22 +1472,22 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
           ],
           if (!isOpen) ...[
-            const SizedBox(height: 15),
+            const SizedBox(height: 14),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(11),
               decoration: BoxDecoration(
-                color: const Color(0xFFE8F3EC),
+                color: softTeal,
                 borderRadius: BorderRadius.circular(11),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.check_circle, color: green, size: 19),
+                  const Icon(Icons.check_circle, color: cyan, size: 18),
                   const SizedBox(width: 9),
                   Expanded(
                     child: Text(
                       'Repaired on ${_formatDate(data['repairedAt'])}',
-                      style: TextStyle(
-                        color: green,
+                      style: const TextStyle(
+                        color: cyan,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1724,23 +1498,23 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
           ],
           if (isOpen) ...[
-            const SizedBox(height: 17),
+            const SizedBox(height: 15),
             SizedBox(
               width: double.infinity,
-              height: 47,
+              height: 46,
               child: ElevatedButton.icon(
                 onPressed: () => _markAsRepaired(report),
-                icon: const Icon(Icons.check_circle_outline, size: 19),
+                icon: const Icon(Icons.check_circle_outline, size: 18),
                 label: const Text(
                   'Mark as Repaired',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: green,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(11),
                   ),
                 ),
               ),
@@ -1780,15 +1554,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cycle marked as repaired.'),
-          backgroundColor: Color(0xFF176B50),
+          backgroundColor: green,
         ),
       );
     } catch (e) {
       if (!mounted) return;
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Update failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Update failed: $e'),
+          backgroundColor: const Color(0xFF9E4141),
+        ),
+      );
     }
   }
 
@@ -1804,15 +1580,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
         Container(
           padding: const EdgeInsets.all(23),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [green, const Color(0xFF104D3A)],
+            gradient: const LinearGradient(
+              colors: [green, Color(0xFF314B51)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: green.withValues(alpha: 0.14),
+                color: green.withValues(alpha: 0.16),
                 blurRadius: 15,
                 offset: const Offset(0, 6),
               ),
@@ -1821,13 +1597,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
           child: Column(
             children: [
               CircleAvatar(
-                radius: 43,
-                backgroundColor: Colors.white,
+                radius: 42,
+                backgroundColor: surface,
                 child: Text(
                   initial,
-                  style: TextStyle(
-                    color: green,
-                    fontSize: 32,
+                  style: const TextStyle(
+                    color: cyan,
+                    fontSize: 31,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1837,7 +1613,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 'Administrator',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 21,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1854,7 +1630,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   vertical: 7,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.17),
+                  color: Colors.white.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Row(
@@ -1870,7 +1646,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       'Admin Account',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1897,9 +1673,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
           'Account Status',
           user == null ? 'Not signed in' : 'Signed in',
         ),
-        const SizedBox(height: 25),
+        const SizedBox(height: 22),
         SizedBox(
-          height: 51,
+          height: 49,
           child: ElevatedButton.icon(
             onPressed: _logout,
             icon: const Icon(Icons.logout),
@@ -1908,8 +1684,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFCEAEA),
-              foregroundColor: Colors.red,
+              backgroundColor: const Color(0xFF633E45),
+              foregroundColor: const Color(0xFFFFB9B9),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(13),
@@ -1921,7 +1697,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         const Center(
           child: Text(
             'RentaCycle Admin Panel',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+            style: TextStyle(color: mutedText, fontSize: 11),
           ),
         ),
       ],
@@ -1931,26 +1707,27 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget _profileInfoCard(IconData icon, String title, String value) {
     return Container(
       margin: const EdgeInsets.only(bottom: 11),
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(14),
       decoration: _cardDecoration(),
       child: Row(
         children: [
           _iconBox(icon),
-          const SizedBox(width: 13),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  style: const TextStyle(color: mutedText, fontSize: 11),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 13,
+                    color: darkText,
                   ),
                 ),
               ],
@@ -1963,12 +1740,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   Widget _iconBox(IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      height: 43,
+      width: 43,
       decoration: BoxDecoration(
-        color: lightGreen,
-        borderRadius: BorderRadius.circular(11),
+        color: softTeal,
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(icon, color: green, size: 21),
+      child: Icon(icon, color: cyan, size: 21),
     );
   }
 
@@ -1978,21 +1756,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 17, color: green),
+          Icon(icon, size: 16, color: cyan),
           const SizedBox(width: 9),
           SizedBox(
-            width: 95,
+            width: 94,
             child: Text(
               title,
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
+              style: const TextStyle(color: mutedText, fontSize: 11),
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: const TextStyle(
-                color: Color(0xFF26352D),
-                fontSize: 12,
+                color: darkText,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2012,17 +1790,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
         value == 'completed' ||
         value == 'repaired' ||
         value == 'resolved') {
-      color = Colors.green.shade100;
-      foreground = Colors.green.shade800;
+      color = const Color(0xFF28594F);
+      foreground = const Color(0xFF9AE0C5);
     } else if (value == 'in_use' || value == 'active') {
-      color = Colors.orange.shade100;
-      foreground = Colors.orange.shade900;
+      color = const Color(0xFF604A37);
+      foreground = const Color(0xFFFFC47E);
     } else if (value == 'maintenance' || value == 'open') {
-      color = Colors.red.shade100;
-      foreground = Colors.red.shade800;
+      color = const Color(0xFF633E45);
+      foreground = const Color(0xFFFFB9B9);
     } else {
-      color = Colors.blue.shade50;
-      foreground = Colors.blue.shade800;
+      color = softTeal;
+      foreground = cyan;
     }
 
     return Container(
@@ -2042,14 +1820,84 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
+  Widget _headerCard(
+    String title,
+    String subtitle,
+    IconData icon,
+    String footer,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(19),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [green, Color(0xFF314B51)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 7),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  footer,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Container(
+            height: 59,
+            width: 59,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: Colors.white, size: 31),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _divider() {
+    return const Divider(height: 1, color: borderColor);
+  }
+
   BoxDecoration _cardDecoration() {
     return BoxDecoration(
-      color: Colors.white,
+      color: surface,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: const Color(0xFFE8EEEA)),
+      border: Border.all(color: borderColor),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.02),
+          color: Colors.black.withValues(alpha: 0.08),
           blurRadius: 9,
           offset: const Offset(0, 3),
         ),
@@ -2058,7 +1906,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _loadingState() {
-    return Center(child: CircularProgressIndicator(color: green));
+    return const Center(child: CircularProgressIndicator(color: cyan));
   }
 
   Widget _errorState(String message) {
@@ -2068,12 +1916,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 42),
+            const Icon(Icons.error_outline, color: Color(0xFFFF8585), size: 42),
             const SizedBox(height: 12),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey),
+              style: const TextStyle(color: mutedText),
             ),
           ],
         ),
@@ -2084,18 +1932,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget _emptyState(IconData icon, String title, String subtitle) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(25),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 53, color: Colors.grey.shade400),
-            const SizedBox(height: 13),
+            Icon(icon, size: 49, color: mutedText),
+            const SizedBox(height: 12),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: darkText,
-                fontSize: 17,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -2103,7 +1951,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey, fontSize: 13),
+              style: const TextStyle(color: mutedText, fontSize: 12),
             ),
           ],
         ),

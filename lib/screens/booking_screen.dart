@@ -12,7 +12,14 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  final Color green = const Color(0xFF1B8A5A);
+  static const Color green = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFFF1F8F8);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color borderColor = Color(0xFF456168);
+  static const Color surface = Color(0xFF314B51);
+  static const Color mutedText = Color(0xFFB5C9CC);
 
   final List<String> cycleTypes = [
     'Standard',
@@ -54,6 +61,20 @@ class _BookingScreenState extends State<BookingScreen> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 30)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: cyan,
+              onPrimary: Colors.white,
+              surface: surface,
+              onSurface: darkTeal,
+            ),
+            dialogTheme: const DialogThemeData(backgroundColor: surface),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -67,6 +88,20 @@ class _BookingScreenState extends State<BookingScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: cyan,
+              onPrimary: Colors.white,
+              surface: surface,
+              onSurface: darkTeal,
+            ),
+            dialogTheme: const DialogThemeData(backgroundColor: surface),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -89,6 +124,20 @@ class _BookingScreenState extends State<BookingScreen> {
         hour: (startTime!.hour + 1) % 24,
         minute: startTime!.minute,
       ),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: cyan,
+              onPrimary: Colors.white,
+              surface: surface,
+              onSurface: darkTeal,
+            ),
+            dialogTheme: const DialogThemeData(backgroundColor: surface),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -99,9 +148,14 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   void showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: surface,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
   }
 
   Future<void> confirmBooking() async {
@@ -222,47 +276,81 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F6),
+      backgroundColor: background,
       appBar: AppBar(
         title: const Text(
           'Book a Cycle',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: darkTeal,
+            fontSize: 20,
+          ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: background,
+        foregroundColor: darkTeal,
         elevation: 0,
+        centerTitle: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 25),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Plan Your Ride',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF23717B), Color(0xFF314B51)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.pedal_bike_rounded, color: cyan, size: 34),
+                    const SizedBox(height: 14),
+                    const Text(
+                      'Plan Your Ride',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Choose your cycle and preferred time slot.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 6),
-              const Text(
-                'Choose your cycle and preferred time slot.',
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 25),
-
+              const SizedBox(height: 26),
               _sectionTitle('Select a Cycle'),
               const SizedBox(height: 10),
-
               StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: FirebaseFirestore.instance
                     .collection('cycles')
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                      child: CircularProgressIndicator(color: cyan),
+                    );
                   }
 
                   if (snapshot.hasError) {
-                    return const Text('Unable to load cycles.');
+                    return const Text(
+                      'Unable to load cycles.',
+                      style: TextStyle(color: mutedText),
+                    );
                   }
 
                   final cycles =
@@ -292,6 +380,16 @@ class _BookingScreenState extends State<BookingScreen> {
                   return DropdownButtonFormField<String>(
                     initialValue: selectedCycle,
                     decoration: _inputDecoration('Choose a cycle'),
+                    dropdownColor: surface,
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: cyan,
+                    ),
+                    style: const TextStyle(
+                      color: darkTeal,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                     items: cycles.map((doc) {
                       final name = (doc.data()['name'] ?? 'Unnamed Cycle')
                           .toString();
@@ -306,9 +404,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   );
                 },
               ),
-
               const SizedBox(height: 25),
-
               _sectionTitle('Booking Date'),
               const SizedBox(height: 10),
               _selectionTile(
@@ -318,12 +414,9 @@ class _BookingScreenState extends State<BookingScreen> {
                     : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
                 onTap: chooseDate,
               ),
-
               const SizedBox(height: 25),
-
               _sectionTitle('Choose Time'),
               const SizedBox(height: 10),
-
               Row(
                 children: [
                   Expanded(
@@ -345,19 +438,23 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 25),
-
               _sectionTitle('Booking Summary'),
               const SizedBox(height: 10),
-
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE4EAE5)),
+                  color: surface,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: borderColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
@@ -365,62 +462,69 @@ class _BookingScreenState extends State<BookingScreen> {
                       'Selected Cycle',
                       selectedCycle.isEmpty ? 'Not selected' : selectedCycle,
                     ),
-                    const Divider(height: 22),
+                    const Divider(height: 22, color: borderColor),
                     _summaryRow(
                       'Date',
                       selectedDate == null
                           ? 'Not selected'
                           : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
                     ),
-                    const Divider(height: 22),
+                    const Divider(height: 22, color: borderColor),
                     _summaryRow('Start', formatTime(startTime)),
-                    const Divider(height: 22),
+                    const Divider(height: 22, color: borderColor),
                     _summaryRow('End', formatTime(endTime)),
-                    const Divider(height: 22),
+                    const Divider(height: 22, color: borderColor),
                     _summaryRow(
                       'Duration',
                       durationMinutes > 0
                           ? '${durationMinutes ~/ 60}h ${durationMinutes % 60}m'
                           : 'Not calculated',
                     ),
-                    const Divider(height: 22),
+                    const Divider(height: 22, color: borderColor),
                     _summaryRow('Price', 'FREE'),
                   ],
                 ),
               ),
-
               const SizedBox(height: 25),
-
               SizedBox(
                 width: double.infinity,
-                height: 52,
+                height: 54,
                 child: ElevatedButton(
                   onPressed: isLoading ? null : confirmBooking,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: green,
                     foregroundColor: Colors.white,
+                    disabledBackgroundColor: green.withValues(alpha: 0.5),
+                    elevation: 2,
+                    shadowColor: green.withValues(alpha: 0.25),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                   child: isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Confirm Booking',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.check_circle_outline_rounded, size: 20),
+                            SizedBox(width: 9),
+                            Text(
+                              'Confirm Booking',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                 ),
               ),
-
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               const Center(
                 child: Text(
                   'Please check your booking details before confirming.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  style: TextStyle(color: mutedText, fontSize: 12),
                 ),
               ),
             ],
@@ -433,22 +537,32 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _sectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+      style: const TextStyle(
+        fontSize: 17,
+        fontWeight: FontWeight.bold,
+        color: darkTeal,
+      ),
     );
   }
 
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
+      labelStyle: const TextStyle(color: mutedText),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFE4EAE5)),
+        borderSide: const BorderSide(color: borderColor),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFE4EAE5)),
+        borderSide: const BorderSide(color: borderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: cyan, width: 1.5),
       ),
     );
   }
@@ -461,18 +575,32 @@ class _BookingScreenState extends State<BookingScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(15),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFE4EAE5)),
+          color: surface,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: borderColor),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(icon, color: green),
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: softTeal,
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: Icon(icon, color: cyan, size: 20),
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -481,11 +609,13 @@ class _BookingScreenState extends State<BookingScreen> {
                   if (subtitle != null)
                     Text(
                       subtitle,
-                      style: const TextStyle(color: Colors.grey, fontSize: 11),
+                      style: const TextStyle(color: mutedText, fontSize: 11),
                     ),
+                  const SizedBox(height: 3),
                   Text(
                     title,
                     style: const TextStyle(
+                      color: darkTeal,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -493,7 +623,11 @@ class _BookingScreenState extends State<BookingScreen> {
                 ],
               ),
             ),
-            const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+            const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: cyan,
+              size: 22,
+            ),
           ],
         ),
       ),
@@ -504,12 +638,16 @@ class _BookingScreenState extends State<BookingScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Colors.grey)),
+        Text(label, style: const TextStyle(color: mutedText, fontSize: 13)),
         Flexible(
           child: Text(
             value,
             textAlign: TextAlign.end,
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              color: darkTeal,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
           ),
         ),
       ],
@@ -521,13 +659,14 @@ class _BookingScreenState extends State<BookingScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: surface,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor),
       ),
       child: Text(
         message,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: Colors.grey),
+        style: const TextStyle(color: mutedText, fontSize: 13),
       ),
     );
   }

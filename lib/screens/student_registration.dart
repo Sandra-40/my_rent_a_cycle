@@ -28,7 +28,13 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
 
-  static const Color primary = Color(0xFF176B50);
+  static const Color background = Color(0xFF263B40);
+  static const Color surface = Color(0xFF314B51);
+  static const Color primary = Color(0xFF23717B);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color textColor = Color(0xFFF1F8F8);
+  static const Color mutedText = Color(0xFFB5C9CC);
+  static const Color borderColor = Color(0xFF456168);
 
   Future<void> _registerStudent() async {
     if (!_formKey.currentState!.validate()) return;
@@ -61,7 +67,6 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      // Sign out after registration.
       await FirebaseAuth.instance.signOut();
 
       if (!mounted) return;
@@ -90,15 +95,16 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: surface),
+        );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Unable to complete registration. Please try again.'),
+            backgroundColor: surface,
           ),
         );
       }
@@ -126,7 +132,8 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
           label,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
-            color: Color(0xFF183B2E),
+            color: textColor,
+            fontSize: 14,
           ),
         ),
         const SizedBox(height: 9),
@@ -134,14 +141,76 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
           controller: controller,
           keyboardType: keyboardType,
           obscureText: obscureText,
+          style: const TextStyle(color: textColor, fontSize: 14),
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, color: primary),
+            hintStyle: const TextStyle(color: mutedText, fontSize: 13),
+            prefixIcon: Icon(icon, color: cyan),
             suffixIcon: suffixIcon,
+            filled: true,
+            fillColor: surface,
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 17,
+              horizontal: 15,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: const BorderSide(color: borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: const BorderSide(color: borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: const BorderSide(color: cyan, width: 1.7),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: const BorderSide(color: Colors.redAccent),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+            ),
           ),
           validator: validator,
         ),
       ],
+    );
+  }
+
+  InputDecoration _dropdownDecoration({
+    required String hint,
+    required IconData icon,
+  }) {
+    return InputDecoration(
+      prefixIcon: Icon(icon, color: cyan),
+      hintText: hint,
+      hintStyle: const TextStyle(color: mutedText, fontSize: 13),
+      filled: true,
+      fillColor: surface,
+      contentPadding: const EdgeInsets.symmetric(vertical: 17, horizontal: 15),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: borderColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: borderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: cyan, width: 1.7),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: Colors.redAccent),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+      ),
     );
   }
 
@@ -158,11 +227,18 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9F7),
+      backgroundColor: background,
       appBar: AppBar(
+        backgroundColor: background,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: textColor),
         title: const Text(
           'Create Account',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: textColor,
+            fontSize: 19,
+          ),
         ),
       ),
       body: SafeArea(
@@ -173,18 +249,35 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Center(
+                  child: Container(
+                    height: 68,
+                    width: 68,
+                    decoration: BoxDecoration(
+                      color: primary,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: cyan.withValues(alpha: 0.35)),
+                    ),
+                    child: const Icon(
+                      Icons.pedal_bike_rounded,
+                      size: 39,
+                      color: cyan,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 23),
                 const Text(
                   'Join RentaCycle',
                   style: TextStyle(
                     fontSize: 27,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF183B2E),
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Create your student account to start booking cycles.',
-                  style: TextStyle(color: Color(0xFF718078), fontSize: 14),
+                  style: TextStyle(color: mutedText, fontSize: 14, height: 1.5),
                 ),
                 const SizedBox(height: 28),
                 _buildTextField(
@@ -217,15 +310,19 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                   'Department',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF183B2E),
+                    color: textColor,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 9),
                 DropdownButtonFormField<String>(
                   initialValue: _selectedDepartment,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.school_outlined, color: primary),
-                    hintText: 'Select department',
+                  dropdownColor: surface,
+                  style: const TextStyle(color: textColor, fontSize: 14),
+                  iconEnabledColor: mutedText,
+                  decoration: _dropdownDecoration(
+                    hint: 'Select department',
+                    icon: Icons.school_outlined,
                   ),
                   items: ['CSE', 'ECE'].map((department) {
                     return DropdownMenuItem(
@@ -250,18 +347,19 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                   'Batch',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF183B2E),
+                    color: textColor,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 9),
                 DropdownButtonFormField<String>(
                   initialValue: _selectedBatch,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.calendar_month_outlined,
-                      color: primary,
-                    ),
-                    hintText: 'Select batch',
+                  dropdownColor: surface,
+                  style: const TextStyle(color: textColor, fontSize: 14),
+                  iconEnabledColor: mutedText,
+                  decoration: _dropdownDecoration(
+                    hint: 'Select batch',
+                    icon: Icons.calendar_month_outlined,
                   ),
                   items: ['2022-2026', '2023-2027', '2024-2028', '2025-2029']
                       .map((batch) {
@@ -314,6 +412,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                       _obscurePassword
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
+                      color: mutedText,
                     ),
                     onPressed: () {
                       setState(() {
@@ -343,6 +442,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                       _obscureConfirmPassword
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
+                      color: mutedText,
                     ),
                     onPressed: () {
                       setState(() {
@@ -363,19 +463,34 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                 const SizedBox(height: 30),
                 SizedBox(
                   width: double.infinity,
-                  height: 54,
+                  height: 55,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _registerStudent,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primary,
+                      foregroundColor: textColor,
+                      disabledBackgroundColor: primary.withValues(alpha: 0.6),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
                     child: _isLoading
                         ? const SizedBox(
                             height: 22,
                             width: 22,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              color: textColor,
                               strokeWidth: 2,
                             ),
                           )
-                        : const Text('Create Account'),
+                        : const Text(
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 22),
@@ -384,7 +499,7 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                   children: [
                     const Text(
                       'Already have an account? ',
-                      style: TextStyle(color: Color(0xFF718078)),
+                      style: TextStyle(color: mutedText, fontSize: 13),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -398,8 +513,9 @@ class _StudentRegistrationScreenState extends State<StudentRegistrationScreen> {
                       child: const Text(
                         'Login',
                         style: TextStyle(
-                          color: primary,
+                          color: cyan,
                           fontWeight: FontWeight.bold,
+                          fontSize: 13,
                         ),
                       ),
                     ),

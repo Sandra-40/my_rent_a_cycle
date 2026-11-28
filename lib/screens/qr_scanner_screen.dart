@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-
 import 'unlock_pin_screen.dart';
 
 class QRScannerScreen extends StatefulWidget {
@@ -22,6 +21,15 @@ class QRScannerScreen extends StatefulWidget {
 }
 
 class _QRScannerScreenState extends State<QRScannerScreen> {
+  static const Color green = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFFF1F8F8);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color borderColor = Color(0xFF456168);
+  static const Color surface = Color(0xFF314B51);
+  static const Color mutedText = Color(0xFFB5C9CC);
+
   final MobileScannerController scannerController = MobileScannerController();
 
   bool isProcessing = false;
@@ -54,7 +62,6 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
       final cycleData = cycleSnapshot.data()!;
 
-      // The cycle QR value must match the value stored in Firestore.
       final expectedQR = (cycleData['qrCode'] ?? '').toString();
 
       if (expectedQR.isEmpty || scannedValue.trim() != expectedQR.trim()) {
@@ -126,117 +133,174 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF101713),
+      backgroundColor: background,
       appBar: AppBar(
         title: const Text(
           'Scan Cycle QR',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: darkTeal,
+            fontSize: 20,
+          ),
         ),
-        backgroundColor: const Color(0xFF101713),
-        foregroundColor: Colors.white,
+        backgroundColor: background,
+        foregroundColor: darkTeal,
         elevation: 0,
         actions: [
           IconButton(
             onPressed: () => scannerController.toggleTorch(),
-            icon: const Icon(Icons.flash_on_rounded),
+            icon: const Icon(Icons.flash_on_rounded, color: cyan),
           ),
         ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 25),
+            const SizedBox(height: 28),
+            const Icon(Icons.qr_code_scanner_rounded, color: cyan, size: 38),
+            const SizedBox(height: 14),
             const Text(
               'Verify Your Cycle',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 23,
+                color: darkTeal,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Scan the QR code attached to ${widget.cycleName}.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Text(
+                'Scan the QR code attached to ${widget.cycleName}.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: mutedText, fontSize: 14),
+              ),
             ),
             const SizedBox(height: 30),
-
             Expanded(
               child: Center(
                 child: Container(
                   width: 290,
                   height: 290,
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
+                    color: surface,
                     borderRadius: BorderRadius.circular(25),
-                    border: Border.all(
-                      color: const Color(0xFF1B8A5A),
-                      width: 4,
-                    ),
+                    border: Border.all(color: cyan, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: cyan.withValues(alpha: 0.15),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: MobileScanner(
-                    controller: scannerController,
-                    onDetect: (capture) {
-                      final barcode = capture.barcodes.firstOrNull;
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(19),
+                    child: MobileScanner(
+                      controller: scannerController,
+                      onDetect: (capture) {
+                        final barcode = capture.barcodes.firstOrNull;
 
-                      if (barcode?.rawValue != null) {
-                        verifyQRCode(barcode!.rawValue!);
-                      }
-                    },
+                        if (barcode?.rawValue != null) {
+                          verifyQRCode(barcode!.rawValue!);
+                        }
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
-
             if (isProcessing)
               const Padding(
                 padding: EdgeInsets.all(12),
-                child: CircularProgressIndicator(color: Colors.white),
+                child: Column(
+                  children: [
+                    CircularProgressIndicator(color: cyan),
+                    SizedBox(height: 10),
+                    Text(
+                      'Verifying QR code...',
+                      style: TextStyle(color: mutedText, fontSize: 13),
+                    ),
+                  ],
+                ),
               ),
-
             if (errorMessage != null)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Text(
-                  errorMessage!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.redAccent,
-                    fontWeight: FontWeight.w600,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(13),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF452D32),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.redAccent.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Text(
+                    errorMessage!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFFFFA6A6),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               ),
-
             const SizedBox(height: 20),
-
-            const Text(
-              'Position the QR code inside the scanning frame.',
-              style: TextStyle(color: Colors.white70),
-              textAlign: TextAlign.center,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: borderColor),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.center_focus_strong_rounded,
+                      color: cyan,
+                      size: 23,
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Position the QR code inside the scanning frame.',
+                        style: TextStyle(color: mutedText, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-
-            const SizedBox(height: 30),
-
+            const SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 52,
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Colors.white54),
+                    foregroundColor: darkTeal,
+                    side: const BorderSide(color: cyan, width: 1.2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(13),
                     ),
                   ),
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                  ),
                 ),
               ),
             ),
-
             const SizedBox(height: 25),
           ],
         ),

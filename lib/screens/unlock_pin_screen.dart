@@ -20,7 +20,15 @@ class UnlockPinScreen extends StatefulWidget {
 }
 
 class _UnlockPinScreenState extends State<UnlockPinScreen> {
-  final Color green = const Color(0xFF1B8A5A);
+  static const Color primary = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFFF1F8F8);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color borderColor = Color(0xFF456168);
+  static const Color surface = Color(0xFF314B51);
+  static const Color mutedText = Color(0xFFB5C9CC);
+
   final TextEditingController pinController = TextEditingController();
 
   bool physicalUnlockConfirmed = false;
@@ -29,7 +37,7 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
   void showMessage(String message) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: surface));
   }
 
   Future<void> startRide() async {
@@ -118,14 +126,18 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8F6),
+      backgroundColor: background,
       appBar: AppBar(
         title: const Text(
           'Unlock Cycle',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: darkTeal,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: surface,
+        foregroundColor: darkTeal,
         elevation: 0,
       ),
       body: SafeArea(
@@ -140,17 +152,29 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
                 height: 100,
                 width: 100,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE6F4EA),
-                  borderRadius: BorderRadius.circular(25),
+                  gradient: const LinearGradient(
+                    colors: [softTeal, surface],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(27),
                 ),
-                child: Icon(Icons.lock_open_rounded, color: green, size: 55),
+                child: const Icon(
+                  Icons.lock_open_rounded,
+                  color: cyan,
+                  size: 55,
+                ),
               ),
 
               const SizedBox(height: 22),
 
               const Text(
                 'Your Cycle is Verified!',
-                style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: darkTeal,
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
 
               const SizedBox(height: 8),
@@ -158,18 +182,18 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
               Text(
                 'Enter the unlock PIN for ${widget.cycleName}.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey, fontSize: 14),
+                style: const TextStyle(color: mutedText, fontSize: 14),
               ),
 
               const SizedBox(height: 35),
 
-              Align(
+              const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Enter 4-Digit PIN',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade800,
+                    color: darkTeal,
                     fontSize: 15,
                   ),
                 ),
@@ -184,6 +208,7 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
                 obscureText: true,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
+                  color: darkTeal,
                   fontSize: 25,
                   letterSpacing: 15,
                   fontWeight: FontWeight.bold,
@@ -191,15 +216,30 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
                 decoration: InputDecoration(
                   counterText: '',
                   hintText: '••••',
+                  hintStyle: const TextStyle(
+                    color: mutedText,
+                    letterSpacing: 15,
+                  ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: surface,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 16,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
-                    borderSide: const BorderSide(color: Color(0xFFE1E8E2)),
+                    borderSide: const BorderSide(color: borderColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
-                    borderSide: const BorderSide(color: Color(0xFFE1E8E2)),
+                    borderSide: const BorderSide(
+                      color: borderColor,
+                      width: 1.2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: const BorderSide(color: cyan, width: 1.8),
                   ),
                 ),
               ),
@@ -209,13 +249,24 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: const Color(0xFFE1E8E2)),
+                  color: surface,
+                  borderRadius: BorderRadius.circular(17),
+                  border: Border.all(color: borderColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
-                  activeColor: green,
+                  activeColor: cyan,
+                  checkColor: background,
+                  checkboxShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                   value: physicalUnlockConfirmed,
                   onChanged: (value) {
                     setState(() {
@@ -224,11 +275,19 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
                   },
                   title: const Text(
                     'Physical Unlock Confirmation',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                    style: TextStyle(
+                      color: darkTeal,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
                   ),
                   subtitle: const Text(
                     'I confirm that the cycle is physically unlocked and ready to use.',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(
+                      color: mutedText,
+                      fontSize: 12,
+                      height: 1.4,
+                    ),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
                 ),
@@ -242,20 +301,29 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
                 child: ElevatedButton(
                   onPressed: isLoading ? null : startRide,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: green,
+                    backgroundColor: primary,
                     foregroundColor: Colors.white,
+                    disabledBackgroundColor: primary.withValues(alpha: 0.5),
+                    elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
                   child: isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Start Ride',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.pedal_bike_rounded, size: 21),
+                            SizedBox(width: 9),
+                            Text(
+                              'Start Ride',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                 ),
               ),
@@ -264,9 +332,10 @@ class _UnlockPinScreenState extends State<UnlockPinScreen> {
 
               TextButton(
                 onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(foregroundColor: cyan),
                 child: const Text(
                   'Go Back',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ],

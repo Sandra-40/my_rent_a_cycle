@@ -6,9 +6,14 @@ import 'landing_screen.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  static const Color green = Color(0xFF1B8A5A);
-  static const Color darkGreen = Color(0xFF126642);
-  static const Color background = Color(0xFFF5F8F5);
+  static const Color primary = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFFF1F8F8);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color borderColor = Color(0xFF456168);
+  static const Color surface = Color(0xFF314B51);
+  static const Color mutedText = Color(0xFFB5C9CC);
 
   Future<void> _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
@@ -28,15 +33,21 @@ class ProfileScreen extends StatelessWidget {
 
     if (user == null) {
       return const Scaffold(
-        body: Center(child: Text('Please log in to view your profile')),
+        backgroundColor: background,
+        body: Center(
+          child: Text(
+            'Please log in to view your profile',
+            style: TextStyle(color: darkTeal),
+          ),
+        ),
       );
     }
 
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
-        backgroundColor: background,
-        foregroundColor: const Color(0xFF20352A),
+        backgroundColor: surface,
+        foregroundColor: darkTeal,
         elevation: 0,
         centerTitle: false,
         title: const Text(
@@ -51,15 +62,25 @@ class ProfileScreen extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: green));
+            return const Center(child: CircularProgressIndicator(color: cyan));
           }
 
           if (snapshot.hasError) {
-            return const Center(child: Text('Unable to load profile details'));
+            return const Center(
+              child: Text(
+                'Unable to load profile details',
+                style: TextStyle(color: darkTeal),
+              ),
+            );
           }
 
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text('Profile details not found'));
+            return const Center(
+              child: Text(
+                'Profile details not found',
+                style: TextStyle(color: darkTeal),
+              ),
+            );
           }
 
           final data = snapshot.data!.data() as Map<String, dynamic>;
@@ -101,11 +122,11 @@ class ProfileScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF20352A),
+                      color: darkTeal,
                     ),
                   ),
                   const Spacer(),
-                  Icon(Icons.badge_outlined, color: green, size: 22),
+                  const Icon(Icons.badge_outlined, color: cyan, size: 22),
                 ],
               ),
 
@@ -113,7 +134,7 @@ class ProfileScreen extends StatelessWidget {
 
               const Text(
                 'Your registered student details',
-                style: TextStyle(fontSize: 13, color: Color(0xFF849087)),
+                style: TextStyle(fontSize: 13, color: mutedText),
               ),
 
               const SizedBox(height: 17),
@@ -121,9 +142,16 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(17),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: surface,
                   borderRadius: BorderRadius.circular(21),
-                  border: Border.all(color: const Color(0xFFE7EDE8)),
+                  border: Border.all(color: borderColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.10),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   children: [
@@ -159,21 +187,22 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(17),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEAF5ED),
+                  color: softTeal,
                   borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: borderColor),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      height: 42,
-                      width: 42,
+                      height: 44,
+                      width: 44,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: surface,
                         borderRadius: BorderRadius.circular(13),
                       ),
                       child: const Icon(
                         Icons.eco_outlined,
-                        color: green,
+                        color: cyan,
                         size: 23,
                       ),
                     ),
@@ -185,7 +214,7 @@ class ProfileScreen extends StatelessWidget {
                           Text(
                             'Ride Smart, Ride Green',
                             style: TextStyle(
-                              color: Color(0xFF20583A),
+                              color: darkTeal,
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
@@ -194,7 +223,7 @@ class ProfileScreen extends StatelessWidget {
                           Text(
                             'Making campus journeys easier and greener.',
                             style: TextStyle(
-                              color: Color(0xFF64816D),
+                              color: mutedText,
                               fontSize: 11,
                               height: 1.4,
                             ),
@@ -218,9 +247,9 @@ class ProfileScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1B8A5A),
+                    backgroundColor: primary,
                     foregroundColor: Colors.white,
-                    elevation: 0,
+                    elevation: 1,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -245,14 +274,14 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 27),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [green, darkGreen],
+          colors: [Color(0xFF23717B), Color(0xFF314B51), Color(0xFF12B2C1)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: green.withValues(alpha: 0.16),
+            color: primary.withValues(alpha: 0.20),
             blurRadius: 17,
             offset: const Offset(0, 7),
           ),
@@ -271,13 +300,13 @@ class ProfileScreen extends StatelessWidget {
             ),
             child: CircleAvatar(
               radius: 42,
-              backgroundColor: const Color(0xFFDDF0E3),
+              backgroundColor: softTeal,
               child: Text(
                 initials.isEmpty ? 'S' : initials,
                 style: const TextStyle(
                   fontSize: 27,
                   fontWeight: FontWeight.bold,
-                  color: darkGreen,
+                  color: darkTeal,
                 ),
               ),
             ),
@@ -300,7 +329,7 @@ class ProfileScreen extends StatelessWidget {
           Text(
             email,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, color: Color(0xFFD8EEE0)),
+            style: const TextStyle(fontSize: 12, color: Color(0xFFE0F5F5)),
           ),
 
           const SizedBox(height: 15),
@@ -320,7 +349,7 @@ class ProfileScreen extends StatelessWidget {
                   size: 9,
                   color: isSuspended
                       ? const Color(0xFFFF8B8B)
-                      : const Color(0xFF9BF0B3),
+                      : const Color(0xFF9BF0D8),
                 ),
                 const SizedBox(width: 7),
                 Text(
@@ -348,10 +377,10 @@ class ProfileScreen extends StatelessWidget {
             height: 43,
             width: 43,
             decoration: BoxDecoration(
-              color: const Color(0xFFEAF5ED),
+              color: softTeal,
               borderRadius: BorderRadius.circular(13),
             ),
-            child: Icon(icon, color: green, size: 22),
+            child: Icon(icon, color: cyan, size: 22),
           ),
           const SizedBox(width: 13),
           Expanded(
@@ -360,10 +389,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Color(0xFF849087),
-                  ),
+                  style: const TextStyle(fontSize: 11, color: mutedText),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -371,7 +397,7 @@ class ProfileScreen extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF26372C),
+                    color: darkTeal,
                   ),
                 ),
               ],
@@ -383,6 +409,6 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _detailDivider() {
-    return const Divider(height: 1, color: Color(0xFFEDF0ED));
+    return const Divider(height: 1, color: borderColor);
   }
 }

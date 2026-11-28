@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +22,19 @@ class RideVerificationScreen extends StatefulWidget {
 }
 
 class _RideVerificationScreenState extends State<RideVerificationScreen> {
+  static const Color primary = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFFF1F8F8);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color borderColor = Color(0xFF456168);
+  static const Color surface = Color(0xFF314B51);
+  static const Color mutedText = Color(0xFFB5C9CC);
+
   final ImagePicker _picker = ImagePicker();
 
   File? rearLockPhoto;
   File? parkedCyclePhoto;
-
   Position? currentPosition;
   bool isLocked = false;
   bool isLoading = false;
@@ -100,7 +107,7 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
 
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: surface));
   }
 
   Future<void> completeRide() async {
@@ -127,9 +134,7 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
       final firestore = FirebaseFirestore.instance;
 
       final verificationRef = firestore.collection('ride_verifications').doc();
-
       final bookingRef = firestore.collection('bookings').doc(widget.bookingId);
-
       final cycleRef = firestore.collection('cycles').doc(widget.cycleId);
 
       final batch = firestore.batch();
@@ -184,29 +189,36 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(18),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade300),
+          color: surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: borderColor),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Container(
-              height: 65,
-              width: 65,
+              height: 66,
+              width: 66,
               decoration: BoxDecoration(
-                color: const Color(0xFFE8F5EE),
-                borderRadius: BorderRadius.circular(12),
+                color: softTeal,
+                borderRadius: BorderRadius.circular(14),
               ),
               child: image != null
                   ? ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                       child: Image.file(image, fit: BoxFit.cover),
                     )
-                  : Icon(icon, color: const Color(0xFF1B8A5A), size: 30),
+                  : Icon(icon, color: cyan, size: 30),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -216,16 +228,18 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
                   Text(
                     title,
                     style: const TextStyle(
+                      color: darkTeal,
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 6),
                   Text(
                     image == null ? 'Tap to capture photo' : 'Photo captured',
                     style: TextStyle(
-                      color: image == null ? Colors.grey : Colors.green,
+                      color: image == null ? mutedText : cyan,
                       fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -233,7 +247,8 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
             ),
             Icon(
               image == null ? Icons.camera_alt_outlined : Icons.check_circle,
-              color: const Color(0xFF1B8A5A),
+              color: image == null ? cyan : cyan,
+              size: 23,
             ),
           ],
         ),
@@ -241,16 +256,51 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
     );
   }
 
+  Widget sectionTitle(String number, String title) {
+    return Row(
+      children: [
+        Container(
+          height: 30,
+          width: 30,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: softTeal,
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: Text(
+            number,
+            style: const TextStyle(color: cyan, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: const TextStyle(
+            color: darkTeal,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F8F6),
+      backgroundColor: background,
       appBar: AppBar(
         title: const Text(
           'End Ride Verification',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: darkTeal,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: surface,
+        foregroundColor: darkTeal,
+        elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -258,73 +308,141 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Complete Your Ride',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [primary, surface],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.verified_user_outlined,
+                      color: cyan,
+                      size: 34,
+                    ),
+                    const SizedBox(height: 14),
+                    const Text(
+                      'Complete Your Ride',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      widget.cycleName,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.75),
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 7,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Text(
+                        'Final ride verification',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                widget.cycleName,
-                style: const TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
 
-              const Text(
-                '1. Location Verification',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-
+              sectionTitle('1', 'Location Verification'),
+              const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade300),
+                  color: surface,
+                  borderRadius: BorderRadius.circular(17),
+                  border: Border.all(color: borderColor),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.location_on_outlined,
-                      color: Color(0xFF1B8A5A),
-                      size: 30,
+                    Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        color: softTeal,
+                        borderRadius: BorderRadius.circular(13),
+                      ),
+                      child: const Icon(
+                        Icons.location_on_outlined,
+                        color: cyan,
+                        size: 27,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        currentPosition == null
-                            ? 'Location not verified'
-                            : 'Location captured successfully',
-                        style: const TextStyle(fontSize: 14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            currentPosition == null
+                                ? 'Location not verified'
+                                : 'Location captured successfully',
+                            style: const TextStyle(
+                              color: darkTeal,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            currentPosition == null
+                                ? 'Verify your parking location'
+                                : 'GPS location is ready',
+                            style: const TextStyle(
+                              color: mutedText,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     TextButton(
                       onPressed: isLoading ? null : getLocation,
+                      style: TextButton.styleFrom(foregroundColor: cyan),
                       child: Text(
                         currentPosition == null ? 'Get Location' : 'Refresh',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 26),
 
-              const Text(
-                '2. Capture Photos',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-
+              sectionTitle('2', 'Capture Photos'),
+              const SizedBox(height: 12),
               photoCard(
                 title: 'Rear Lock Photo',
                 image: rearLockPhoto,
                 icon: Icons.lock_outline,
                 onTap: () => takePhoto(true),
               ),
-
               const SizedBox(height: 12),
-
               photoCard(
                 title: 'Parked Cycle Photo',
                 image: parkedCyclePhoto,
@@ -332,25 +450,34 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
                 onTap: () => takePhoto(false),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 26),
 
-              const Text(
-                '3. Lock Confirmation',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-
+              sectionTitle('3', 'Lock Confirmation'),
+              const SizedBox(height: 12),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
+                  color: surface,
+                  borderRadius: BorderRadius.circular(17),
+                  border: Border.all(color: borderColor),
                 ),
                 child: CheckboxListTile(
                   value: isLocked,
-                  activeColor: const Color(0xFF1B8A5A),
+                  activeColor: cyan,
+                  checkColor: background,
+                  checkboxShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 5,
+                  ),
                   title: const Text(
                     'I confirm that the cycle is properly locked.',
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(
+                      color: darkTeal,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   onChanged: isLoading
                       ? null
@@ -366,27 +493,37 @@ class _RideVerificationScreenState extends State<RideVerificationScreen> {
 
               SizedBox(
                 width: double.infinity,
-                height: 52,
+                height: 54,
                 child: ElevatedButton(
                   onPressed: isLoading ? null : completeRide,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1B8A5A),
+                    backgroundColor: primary,
                     foregroundColor: Colors.white,
+                    disabledBackgroundColor: primary.withValues(alpha: 0.5),
+                    elevation: 2,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                   child: isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Complete Ride',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.check_circle_outline, size: 20),
+                            SizedBox(width: 9),
+                            Text(
+                              'Complete Ride',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                 ),
               ),
+              const SizedBox(height: 12),
             ],
           ),
         ),

@@ -21,8 +21,15 @@ class DamageReportScreen extends StatefulWidget {
 }
 
 class _DamageReportScreenState extends State<DamageReportScreen> {
-  final Color green = const Color(0xFF176B50);
-  final Color background = const Color(0xFFF5F8F6);
+  static const Color primary = Color(0xFF23717B);
+  static const Color darkTeal = Color(0xFFF1F8F8);
+  static const Color cyan = Color(0xFF12B2C1);
+  static const Color background = Color(0xFF263B40);
+  static const Color softTeal = Color(0xFF3A555B);
+  static const Color borderColor = Color(0xFF456168);
+  static const Color surface = Color(0xFF314B51);
+  static const Color mutedText = Color(0xFFB5C9CC);
+
   final TextEditingController descriptionController = TextEditingController();
   final ImagePicker picker = ImagePicker();
 
@@ -63,7 +70,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: green,
+        backgroundColor: primary,
       ),
     );
   }
@@ -148,10 +155,10 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
           height: 42,
           width: 42,
           decoration: BoxDecoration(
-            color: green.withValues(alpha: 0.10),
+            color: softTeal,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: green, size: 22),
+          child: Icon(icon, color: cyan, size: 22),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -163,13 +170,14 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF26352D),
+                  color: darkTeal,
                 ),
               ),
               const SizedBox(height: 3),
+              const Text(' ', style: TextStyle(fontSize: 1)),
               Text(
                 subtitle,
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                style: const TextStyle(fontSize: 12, color: mutedText),
               ),
             ],
           ),
@@ -183,12 +191,12 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE8EEE9)),
+        border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.035),
+            color: Colors.black.withValues(alpha: 0.10),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -211,10 +219,14 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
       appBar: AppBar(
         title: const Text(
           'Report Damage',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 19,
+            color: darkTeal,
+          ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF26352D),
+        backgroundColor: surface,
+        foregroundColor: darkTeal,
         elevation: 0,
         centerTitle: false,
       ),
@@ -228,8 +240,23 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: green,
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF23717B),
+                      Color(0xFF314B51),
+                      Color(0xFF12B2C1),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primary.withValues(alpha: 0.20),
+                      blurRadius: 15,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +265,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                       height: 46,
                       width: 46,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.16),
+                        color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(
@@ -279,7 +306,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                         children: [
                           const Icon(
                             Icons.directions_bike,
-                            color: Colors.white,
+                            color: cyan,
                             size: 19,
                           ),
                           const SizedBox(width: 9),
@@ -316,21 +343,28 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                       decoration: BoxDecoration(
                         color: background,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE1E8E2)),
+                        border: Border.all(color: borderColor),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: selectedDamage,
-                          hint: const Text('Select damage type'),
+                          hint: const Text(
+                            'Select damage type',
+                            style: TextStyle(color: mutedText),
+                          ),
                           isExpanded: true,
-                          icon: Icon(
+                          dropdownColor: surface,
+                          icon: const Icon(
                             Icons.keyboard_arrow_down_rounded,
-                            color: green,
+                            color: cyan,
                           ),
                           items: damageTypes.map((type) {
                             return DropdownMenuItem(
                               value: type,
-                              child: Text(type),
+                              child: Text(
+                                type,
+                                style: const TextStyle(color: darkTeal),
+                              ),
                             );
                           }).toList(),
                           onChanged: isSubmitting
@@ -364,30 +398,28 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                       maxLines: 5,
                       maxLength: 500,
                       enabled: !isSubmitting,
+                      style: const TextStyle(color: darkTeal, fontSize: 14),
                       decoration: InputDecoration(
                         hintText: 'Describe the problem with the cycle...',
-                        hintStyle: TextStyle(
-                          color: Colors.grey.shade500,
+                        hintStyle: const TextStyle(
+                          color: mutedText,
                           fontSize: 13,
                         ),
+                        counterStyle: const TextStyle(color: mutedText),
                         filled: true,
                         fillColor: background,
                         contentPadding: const EdgeInsets.all(14),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFE1E8E2),
-                          ),
+                          borderSide: const BorderSide(color: borderColor),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFE1E8E2),
-                          ),
+                          borderSide: const BorderSide(color: borderColor),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: green, width: 1.5),
+                          borderSide: const BorderSide(color: cyan, width: 1.5),
                         ),
                       ),
                     ),
@@ -416,21 +448,30 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                         decoration: BoxDecoration(
                           color: background,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: const Color(0xFFD5E2D8)),
+                          border: Border.all(color: borderColor),
                         ),
                         child: damagePhoto == null
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    Icons.add_a_photo_outlined,
-                                    size: 35,
-                                    color: green,
+                                  Container(
+                                    height: 55,
+                                    width: 55,
+                                    decoration: BoxDecoration(
+                                      color: softTeal,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: const Icon(
+                                      Icons.add_a_photo_outlined,
+                                      size: 28,
+                                      color: cyan,
+                                    ),
                                   ),
                                   const SizedBox(height: 10),
                                   const Text(
                                     'Tap to capture a photo',
                                     style: TextStyle(
+                                      color: darkTeal,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -439,7 +480,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                                   Text(
                                     'Photo is optional',
                                     style: TextStyle(
-                                      color: Colors.grey.shade600,
+                                      color: mutedText,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -466,9 +507,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                                 },
                           icon: const Icon(Icons.delete_outline, size: 19),
                           label: const Text('Remove photo'),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.red.shade700,
-                          ),
+                          style: TextButton.styleFrom(foregroundColor: cyan),
                         ),
                       ),
                   ],
@@ -480,27 +519,27 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
               Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFF5E5),
+                  color: const Color(0xFF514735),
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: const Color(0xFFF2DDB7)),
+                  border: Border.all(color: const Color(0xFF786747)),
                 ),
-                child: Row(
+                child: const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.info_outline_rounded,
-                      color: Color(0xFFB7791F),
+                      color: Color(0xFFFFD27A),
                       size: 22,
                     ),
-                    const SizedBox(width: 11),
-                    const Expanded(
+                    SizedBox(width: 11),
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Important Notice',
                             style: TextStyle(
-                              color: Color(0xFF805515),
+                              color: Color(0xFFFFD27A),
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
@@ -509,7 +548,7 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                           Text(
                             'Submitting this report will automatically end your current ride and mark the cycle as under maintenance.',
                             style: TextStyle(
-                              color: Color(0xFF805515),
+                              color: Color(0xFFFFE8B8),
                               fontSize: 12,
                               height: 1.5,
                             ),
@@ -529,10 +568,10 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
                 child: ElevatedButton(
                   onPressed: isSubmitting ? null : submitReport,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: green,
+                    backgroundColor: primary,
                     foregroundColor: Colors.white,
-                    disabledBackgroundColor: green.withValues(alpha: 0.6),
-                    elevation: 0,
+                    disabledBackgroundColor: primary.withValues(alpha: 0.6),
+                    elevation: 1,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -565,11 +604,11 @@ class _DamageReportScreenState extends State<DamageReportScreen> {
 
               const SizedBox(height: 12),
 
-              Center(
+              const Center(
                 child: Text(
                   'Thank you for helping us maintain our cycles.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
+                  style: TextStyle(color: mutedText, fontSize: 11),
                 ),
               ),
             ],
